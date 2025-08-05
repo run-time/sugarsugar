@@ -141,50 +141,56 @@
 
           const data = await response.json();
 
-          let trendSymbol = data.trend.symbol || '—';
-
-          const glucoseValue = data.value;
-
-          let glucoseTrend = '';
-          if (data.value_difference) {
-            if (data.value_difference > 0) {
-              glucoseTrend = `+${data.value_difference}`;
+          const getTrendicator = (data) => {
+            if (!data || !data.value) {
+              return `<circle-trendicator value="??" trend="?" rotation="off" theme="default"></circle-trendicator>`;
             } else {
-              glucoseTrend = `${data.value_difference}`;
+              const trendMap = {
+                '—': 'off',
+                '⇈': '0',
+                '↑': '0',
+                '↗': '45',
+                '→': '90',
+                '↘': '135',
+                '↓': '180',
+                '⇊': '180',
+                '?': 'off',
+                '!': 'off',
+              };
+
+              let trendSymbol = data.trend.symbol || '—';
+
+              const glucoseValue = data.value;
+
+              let glucoseTrend = '';
+              if (data.value_difference) {
+                if (data.value_difference > 0) {
+                  glucoseTrend = `+${data.value_difference}`;
+                } else {
+                  glucoseTrend = `${data.value_difference}`;
+                }
+              }
+
+              let glucoseTheme =
+                data.status === 'LOW'
+                  ? 'low'
+                  : data.status === 'HIGH'
+                    ? 'high'
+                    : 'default';
+
+              const glucoseRotation = trendMap[trendSymbol] || 'off';
+
+              const calcAlert =
+                data.trend.symbol === '⇈' || data.trend.symbol === '⇊'
+                  ? `alert="true"`
+                  : '';
+
+              return `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}></circle-trendicator>`;
             }
-          }
-
-          let glucoseTheme =
-            data.status === 'LOW'
-              ? 'low'
-              : data.status === 'HIGH'
-                ? 'high'
-                : 'default';
-
-          const trendMap = {
-            '—': 'off',
-            '⇈': '0',
-            '↑': '0',
-            '↗': '45',
-            '→': '90',
-            '↘': '135',
-            '↓': '180',
-            '⇊': '180',
-            '?': 'off',
-            '!': 'off',
           };
 
-          const glucoseRotation = trendMap[trendSymbol] || 'off';
-
-          const calcAlert =
-            data.trend.symbol === '⇈' || data.trend.symbol === '⇊'
-              ? `alert="true"`
-              : '';
-
-          document.getElementById('output_glucose_indicator').innerHTML = `
-                    <circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}>
-                    </circle-trendicator>
-                `;
+          document.getElementById('output_glucose_indicator').innerHTML =
+            getTrendicator(data);
           document.getElementById('output_glucose_json').innerHTML =
             `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         } catch (error) {
