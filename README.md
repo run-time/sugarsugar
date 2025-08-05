@@ -2,7 +2,7 @@
 
 A webservice to ask Dexcom Share servers for blood glucose data.
 
-### [Live Demo](https://sugarsugar-git-main-dave-algers-projects.vercel.app/)
+### [Live Demo](https://sugarsugar.vercel.app/)
 
 ---
 
