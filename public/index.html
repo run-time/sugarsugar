@@ -146,10 +146,12 @@
           const glucoseValue = data.value;
 
           let glucoseTrend = '';
-          if (data.value_difference > 0) {
-            glucoseTrend = `+${data.value_difference}`;
-          } else {
-            glucoseTrend = `${data.value_difference}`;
+          if (data.value_difference) {
+            if (data.value_difference > 0) {
+              glucoseTrend = `+${data.value_difference}`;
+            } else {
+              glucoseTrend = `${data.value_difference}`;
+            }
           }
 
           let glucoseTheme =

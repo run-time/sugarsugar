@@ -118,16 +118,17 @@ class SugarSugar {
       }
 
       if (readings.length > 1) {
-        // add previousValue field to the latest reading
-        const previousValue = readings[1].Value;
-        readings[0].PreviousValue = previousValue;
-        console.log(`Previous reading value: ${previousValue}`);
-
-        // add a field representing the value difference between the two readings
-        const valueDifference = readings[0].Value - previousValue;
-        readings[0].ValueDifference = valueDifference;
+        readings[0].PreviousValue = readings[1].Value || null;
+        readings[0].ValueDifference =
+          readings[0].Value - readings[1].Value || null;
         console.log(
-          `Value difference between latest readings: ${valueDifference}`,
+          `Value difference between latest readings: ${readings[0].ValueDifference}`,
+        );
+      } else {
+        readings[0].PreviousValue = null;
+        readings[0].ValueDifference = null;
+        console.log(
+          'Only one reading available, setting previousValue and valueDifference to null',
         );
       }
 
