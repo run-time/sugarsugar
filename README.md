@@ -4,18 +4,11 @@ A webservice to ask Dexcom Share servers for blood glucose data.
 
 ## Description
 
-SugarSugar is a Node.js web service that interfaces with Dexcom Share API to retrieve blood glucose data. This service can be used to build applications that need access to continuous glucose monitoring (CGM) data.
+SugarSugar is a Node.js web service that interfaces with Dexcom Share API to retrieve blood glucose data. This service can be used to build applications that need access to continuous glucose monitoring (CGM) data. Fork this project and setup environment on vercel to make your own SugarSugar webservice!
 
-run this command to see Dave Alger's current blood sugar...
+### Live Demo
 
-`curl https://sugarsugar-i7mr5b18t-dave-algers-projects.vercel.app/api/glucose`
-
-fork this project to make your own SugarSugar webservice
-
-## Prerequisites
-
-- Node.js >= 22.18.0
-- A Dexcom Share account with data sharing enabled
+You can see a live demo at: [`https://sugarsugar-i7mr5b18t-dave-algers-projects.vercel.app/api/glucose`](https://sugarsugar-k98tap9gd-dave-algers-projects.vercel.app/)
 
 ## Installation
 
@@ -158,10 +151,6 @@ curl http://localhost:3000/api/glucose
 # Or visit the web interface
 open http://localhost:3000
 ````
-
-### Live Demo
-
-You can see a live demo at: `https://sugarsugar-i7mr5b18t-dave-algers-projects.vercel.app/api/glucose`
 
 ## Deployment to Vercel
 
