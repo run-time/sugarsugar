@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "public",
+  "routes": [
+    {
+      "src": "/api/health",
+      "dest": "/api/health.js"
+    },
+    {
+      "src": "/api/glucose",
+      "dest": "/api/glucose.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/public/$1"
+    }
+  ]
+}

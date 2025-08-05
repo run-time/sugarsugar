@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SugarSugar API</title>
+    <script src="./circle-trendicator.js" type="module"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        line-height: 1.6;
+        background: #f8f9fa;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #333;
+        border-bottom: 3px solid #007acc;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #555;
+        margin-top: 30px;
+      }
+      .endpoint {
+        background: #f1f3f4;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border-left: 4px solid #007acc;
+      }
+      .endpoint code {
+        background: #e8f4f8;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Monaco', 'Consolas', monospace;
+      }
+      a {
+        color: #007acc;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+      .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+      .status.live {
+        background: #d4edda;
+        color: #155724;
+      }
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        text-align: center;
+        color: #666;
+      }
+      .glucose-container {
+        font-family: system-ui;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🍭 SugarSugar API</h1>
+      <p>
+        <strong
+          >A webservice to ask Dexcom Share servers for blood glucose
+          data</strong
+        >
+      </p>
+      <p><span class="status live">LIVE</span> API Version 1.0.0</p>
+
+      <h2>📊 Available Endpoints</h2>
+
+      <div class="endpoint">
+        <strong>GET <code>/api/health</code></strong
+        ><br />
+        Service health check and status
+      </div>
+
+      <div class="endpoint">
+        <strong>GET <code>/api/glucose</code></strong
+        ><br />
+        Latest glucose reading with simple format
+      </div>
+
+      <h2>🧪 Test the API</h2>
+      <p>Try these endpoints:</p>
+      <ul>
+        <li><a href="/api/health" target="_blank">Health Check</a></li>
+        <li><a href="/api/glucose" target="_blank">Latest Glucose</a></li>
+      </ul>
+
+      <h2>/api/health</h2>
+      <div id="output_health_json"></div>
+
+      <h2>/api/glucose</h2>
+      <div id="output_glucose_json"></div>
+      <div id="output_glucose_indicator" class="glucose-container"></div>
+
+      <h2>📖 Documentation</h2>
+      <p>
+        For complete setup instructions and API documentation, visit the
+        <a href="https://github.com/run-time/sugarsugar" target="_blank"
+          >GitHub repository</a
+        >.
+      </p>
+
+      <div class="footer">
+        <p>Made with ❤️ by Dave Alger | Powered by Dexcom Share API</p>
+        <p><small>This project is not affiliated with Dexcom, Inc.</small></p>
+      </div>
+    </div>
+
+    <script>
+      // Simple script to fetch and display API data
+      async function fetchGlucose() {
+        const endpoint = '/api/glucose';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const data = await response.json();
+
+          let trendSymbol = data.trend.symbol || '—';
+
+          const glucoseValue = data.value;
+
+          let glucoseTrend = '';
+          if (data.value_difference > 0) {
+            glucoseTrend = `+${data.value_difference}`;
+          } else {
+            glucoseTrend = `${data.value_difference}`;
+          }
+
+          let glucoseTheme =
+            data.status === 'LOW'
+              ? 'low'
+              : data.status === 'HIGH'
+                ? 'high'
+                : 'default';
+
+          const trendMap = {
+            '—': 'off',
+            '⇈': '0',
+            '↑': '0',
+            '↗': '45',
+            '→': '90',
+            '↘': '135',
+            '↓': '180',
+            '⇊': '180',
+            '?': 'off',
+            '!': 'off',
+          };
+
+          const glucoseRotation = trendMap[trendSymbol] || 'off';
+
+          const calcAlert =
+            data.trend.symbol === '⇈' || data.trend.symbol === '⇊'
+              ? `alert="true"`
+              : '';
+
+          document.getElementById('output_glucose_indicator').innerHTML = `
+                    <circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}>
+                    </circle-trendicator>
+                `;
+          document.getElementById('output_glucose_json').innerHTML =
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+          document.getElementById('output_glucose_json').innerHTML =
+            `<p>Error: ${error.message}</p>`;
+        }
+      }
+
+      // Fetch glucose data immediately on page load
+      fetchGlucose();
+
+      // Set up automatic updates every minute (60,000 milliseconds)
+      setInterval(fetchGlucose, 60000);
+
+      async function fetchHealth() {
+        const endpoint = '/api/health';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          document.getElementById('output_health').innerHTML =
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+          document.getElementById('output_health').innerHTML =
+            `<p>Error: ${error.message}</p>`;
+        }
+      }
+
+      fetchHealth();
+    </script>
+  </body>
+</html>
