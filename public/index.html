@@ -98,6 +98,12 @@
         Latest glucose reading with simple format
       </div>
 
+      <h2>
+        📊 Native Web Component
+        <pre><code>circle-trendicator</code></pre>
+      </h2>
+      <div id="output_glucose_indicator" class="glucose-container"></div>
+
       <h2>🧪 Test the API</h2>
       <p>Try these endpoints:</p>
       <ul>
@@ -110,7 +116,6 @@
 
       <h2>/api/glucose</h2>
       <div id="output_glucose_json"></div>
-      <div id="output_glucose_indicator" class="glucose-container"></div>
 
       <h2>📖 Documentation</h2>
       <p>
@@ -198,10 +203,10 @@
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
-          document.getElementById('output_health').innerHTML =
+          document.getElementById('output_health_json').innerHTML =
             `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         } catch (error) {
-          document.getElementById('output_health').innerHTML =
+          document.getElementById('output_health_json').innerHTML =
             `<p>Error: ${error.message}</p>`;
         }
       }
