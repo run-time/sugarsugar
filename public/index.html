@@ -142,8 +142,17 @@
           const data = await response.json();
 
           const getTrendicator = (data) => {
+            let retElement = '';
+
             if (!data || !data.value) {
-              return `<circle-trendicator value="??" trend="?" rotation="off" theme="default"></circle-trendicator>`;
+              retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default"></circle-trendicator>`;
+            } else if (data.minutes_ago > 20) {
+              retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error"></circle-trendicator>`;
+            } else if (parseInt(data.value, 0) < 40) {
+              retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low"></circle-trendicator>`;
+            } else if (parseInt(data.value, 0) > 400) {
+              retElement =
+                '<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high"></circle-trendicator>';
             } else {
               const trendMap = {
                 '—': 'off',
@@ -185,8 +194,10 @@
                   ? `alert="true"`
                   : '';
 
-              return `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}></circle-trendicator>`;
+              retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}></circle-trendicator>`;
             }
+
+            return retElement;
           };
 
           document.getElementById('output_glucose_indicator').innerHTML =

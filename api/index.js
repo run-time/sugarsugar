@@ -90,6 +90,7 @@ app.get('/api/glucose', async (req, res) => {
       trend: reading._trend_info,
       status: reading._status,
       read: reading._time_ago,
+      minutes_ago: reading._minutes_ago,
     });
   } catch (error) {
     console.error('Error fetching glucose:', error);

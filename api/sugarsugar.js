@@ -120,7 +120,9 @@ class SugarSugar {
       if (readings.length > 1) {
         readings[0].PreviousValue = readings[1].Value || null;
         readings[0].ValueDifference =
-          readings[0].Value - readings[1].Value || null;
+          readings[0].Value != null && readings[1].Value != null
+            ? readings[0].Value - readings[1].Value
+            : null;
         console.log(
           `Value difference between latest readings: ${readings[0].ValueDifference}`,
         );
@@ -159,6 +161,7 @@ class SugarSugar {
     const trendInfo = TREND_ARROWS[reading.Trend] || TREND_ARROWS.NotComputable;
     const readingTime = new Date(parseInt(reading.WT.match(/\d+/)[0]));
     const timeAgo = this.getTimeAgo(readingTime);
+    const minutesAgo = this.getMinutesAgo(readingTime);
 
     return {
       _value: reading.Value,
@@ -168,8 +171,15 @@ class SugarSugar {
       _trend_info: trendInfo,
       _datetime: readingTime,
       _time_ago: timeAgo,
+      _minutes_ago: minutesAgo,
       _status: this.getGlucoseStatus(reading.Value),
     };
+  }
+
+  getMinutesAgo(readingTime) {
+    const now = new Date();
+    const diffMs = now - readingTime;
+    return Math.floor(diffMs / 60000);
   }
 
   getTimeAgo(readingTime) {

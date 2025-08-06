@@ -45,6 +45,12 @@ class CircleTrendicator extends HTMLElement {
         ind: '#909090',
         alert: '#cc6060',
       },
+      error: {
+        fg: '#884444',
+        bg: '#ffffff',
+        ind: '#cc6060',
+        alert: '#cc6060',
+      },
     };
   }
 
@@ -86,29 +92,35 @@ class CircleTrendicator extends HTMLElement {
     if (r === 'off') {
       return 'off';
     } else {
-      return Number.parseInt(r) || 0;
+      const parsed = Number.parseInt(r);
+      return Number.isNaN(parsed) ? 90 : parsed;
     }
   }
 
   render() {
     const size = this.size;
-    const borderWidth = Math.round(size * 0.058);
+    const borderWidth = Math.round(size * 0.068);
     const innerBorderWidth = Math.round(size * 0.02);
-    const shadowBorderWidth = Math.round(size * 0.06);
-    const fontSize = Math.round(size * 0.36);
+    const fontSize =
+      this.value === 'LOW' || this.value === 'HIGH'
+        ? Math.round(size * 0.3)
+        : Math.round(size * 0.36);
     const trendFontSize = Math.round(size * 0.14);
     const indicatorArrowElement =
       this.rotation === 'off' ? '' : '<div class="arrow-indicator"></div>';
+    const alertArrowTop = Math.round(size * 1.071);
+    const alertArrowRight = Math.round(size * 0.414);
+    const alertArrowFontSize = Math.round(size * 0.343);
     const alertSignal = this.alert
       ? `
       .arrow-indicator::after {
         display: block;
         content: "⇲";
-        font-size: 38px;
+        font-size: ${alertArrowFontSize}px;
         color: #ffffff;
         position: relative;
-        top: 168px;
-        right: 60px;
+        top: ${alertArrowTop}px;
+        right: ${alertArrowRight}px;
         z-index: 4;
         transform: rotate(90deg);
       }
@@ -131,7 +143,7 @@ class CircleTrendicator extends HTMLElement {
           width: ${size}px;
           height: ${size}px;
           border-radius: 50%;
-          border: ${borderWidth}px solid ${this.indColor};
+          border: ${borderWidth}px ${this.theme === 'error' ? 'dashed' : 'solid'} ${this.indColor};
           display: flex;
           align-items: center;
           justify-content: center;
@@ -167,7 +179,7 @@ class CircleTrendicator extends HTMLElement {
           position: relative;
           margin: 0;
           margin-top: -2px;
-          opacity: 0.4;
+          opacity: 0.5;
         }
 
         .arrow-indicator {
@@ -177,7 +189,7 @@ class CircleTrendicator extends HTMLElement {
           width: ${size}px;
           height: ${size}px;
           background-color: ${this.indColor};
-          border: ${shadowBorderWidth}px solid ${this.indColor};
+          border: ${borderWidth}px solid ${this.indColor};
           border-radius: 50% 50% 50% 0;
           transform: rotate(${this.rotation + 135}deg);
           z-index: 1;
