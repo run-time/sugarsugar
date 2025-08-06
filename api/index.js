@@ -26,9 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Serve static files from public directory
-app.use(express.static(join(__dirname, '../public')));
-
 // Shared client initialization (matches serverless functions)
 let dexcomClient = null;
 
@@ -121,6 +118,9 @@ app.use((error, req, res, _next) => {
   console.error('Unhandled error:', error);
   res.status(500).json({ error: 'Internal server error' });
 });
+
+// Serve static files from public directory (after API routes)
+app.use(express.static(join(__dirname, '../public')));
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Endpoint not found' });
