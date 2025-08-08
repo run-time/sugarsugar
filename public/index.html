@@ -4,7 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugarSugar API</title>
+
     <script src="./circle-trendicator.js" type="module"></script>
+    <script src="./glucose-mini-graph.js" type="module"></script>
+    <script>
+      window.BENCHMARKS = {
+        LOW: 60,
+        HIGH: 240,
+      };
+    </script>
     <style>
       body {
         font-family:
@@ -84,18 +92,24 @@
       </p>
       <p><span class="status live">LIVE</span> API Version 1.0.0</p>
 
-      <h2>📊 Available Endpoints</h2>
+      <h2>📊 API Endpoints</h2>
 
       <div class="endpoint">
-        <strong>GET <code>/api/health</code></strong
+        <strong>GET <code>/health</code></strong
         ><br />
         Service health check and status
       </div>
 
       <div class="endpoint">
-        <strong>GET <code>/api/glucose</code></strong
+        <strong>GET <code>/glucose</code></strong
         ><br />
         Latest glucose reading with simple format
+      </div>
+
+      <div class="endpoint">
+        <strong>GET <code>/graph</code></strong
+        ><br />
+        Last 2 hours of glucose data in a simple format
       </div>
 
       <h2>
@@ -103,26 +117,29 @@
         <pre><code>circle-trendicator</code></pre>
       </h2>
       <div id="output_glucose_indicator" class="glucose-container"></div>
+      <h3><a href="trendicators.html" target="_blank">code samples</a></h3>
 
       <h2>🧪 Test the API</h2>
       <p>Try these endpoints:</p>
       <ul>
-        <li><a href="/api/health" target="_blank">Health Check</a></li>
-        <li><a href="/api/glucose" target="_blank">Latest Glucose</a></li>
+        <li><a href="/health" target="_blank">Health Check</a></li>
+        <li><a href="/glucose" target="_blank">Latest Glucose Reading</a></li>
+        <li><a href="/graph" target="_blank">Last 2 hours of Glucose Data</a></li>
       </ul>
 
-      <h2>/api/health</h2>
+      <h2>/health</h2>
       <div id="output_health_json"></div>
 
-      <h2>/api/glucose</h2>
+      <h2>/glucose</h2>
       <div id="output_glucose_json"></div>
+
+      <h2>/graph</h2>
+      <div id="output_graph_json"></div>
 
       <h2>📖 Documentation</h2>
       <p>
         For complete setup instructions and API documentation, visit the
-        <a href="https://github.com/run-time/sugarsugar" target="_blank"
-          >GitHub repository</a
-        >.
+        <a href="https://github.com/run-time/sugarsugar" target="_blank">GitHub repository</a>.
       </p>
 
       <div class="footer">
@@ -132,9 +149,41 @@
     </div>
 
     <script>
+      // Example data for health check
+      async function fetchHealth() {
+        const endpoint = '/health';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          document.getElementById('output_health_json').innerHTML =
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+          document.getElementById('output_health_json').innerHTML =
+            `<p>Error: ${error.message}</p>`;
+        }
+      }
+      fetchHealth();
+
+      // Example data for trendicators
+      async function fetchGraph() {
+        const endpoint = '/graph';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          document.getElementById('output_graph_json').innerHTML =
+            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
+        } catch (error) {
+          document.getElementById('output_graph_json').innerHTML =
+            `<p>Error: ${error.message}</p>`;
+        }
+      }
+      fetchGraph();
+
       // Simple script to fetch and display API data
       async function fetchGlucose() {
-        const endpoint = '/api/glucose';
+        const endpoint = '/glucose';
         try {
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error('Network response was not ok');
@@ -143,16 +192,19 @@
 
           const getTrendicator = (data) => {
             let retElement = '';
+            // Use BENCHMARKS from window (populated by constants.js)
+            const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
+            const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="3"`;
 
             if (!data || !data.value) {
-              retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default"></circle-trendicator>`;
+              retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;
             } else if (data.minutes_ago > 20) {
-              retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error"></circle-trendicator>`;
+              retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
             } else if (parseInt(data.value, 0) < 40) {
-              retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low"></circle-trendicator>`;
+              retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${benchAttrs}></circle-trendicator>`;
             } else if (parseInt(data.value, 0) > 400) {
               retElement =
-                '<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high"></circle-trendicator>';
+                `<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high" ${benchAttrs}></circle-trendicator>`;
             } else {
               const trendMap = {
                 '—': 'off',
@@ -194,7 +246,7 @@
                   ? `alert="true"`
                   : '';
 
-              retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert}></circle-trendicator>`;
+              retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${benchAttrs}></circle-trendicator>`;
             }
 
             return retElement;
@@ -209,28 +261,10 @@
             `<p>Error: ${error.message}</p>`;
         }
       }
-
-      // Fetch glucose data immediately on page load
       fetchGlucose();
 
       // Set up automatic updates every minute (60,000 milliseconds)
       setInterval(fetchGlucose, 60000);
-
-      async function fetchHealth() {
-        const endpoint = '/api/health';
-        try {
-          const response = await fetch(endpoint);
-          if (!response.ok) throw new Error('Network response was not ok');
-          const data = await response.json();
-          document.getElementById('output_health_json').innerHTML =
-            `<pre>${JSON.stringify(data, null, 2)}</pre>`;
-        } catch (error) {
-          document.getElementById('output_health_json').innerHTML =
-            `<p>Error: ${error.message}</p>`;
-        }
-      }
-
-      fetchHealth();
     </script>
   </body>
 </html>

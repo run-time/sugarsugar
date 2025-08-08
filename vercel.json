@@ -4,12 +4,16 @@
   "outputDirectory": "public",
   "routes": [
     {
-      "src": "/api/health",
+      "src": "/health",
       "dest": "/api/health.js"
     },
     {
-      "src": "/api/glucose",
+      "src": "/glucose",
       "dest": "/api/glucose.js"
+    },
+    {
+      "src": "/graph",
+      "dest": "/api/graph.js"
     },
     {
       "src": "/(.*)",

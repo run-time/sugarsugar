@@ -118,10 +118,11 @@
           {
             title: 'Sizes',
             examples: [
-              { attrs: { value: 91, trend: '+1' } },
+              { attrs: { value: 91, trend: 'default=140', size: 140 } },
               {
                 attrs: {
-                  value: 78,
+                  theme: 'low',
+                  value: 45,
                   trend: '-6',
                   size: 100,
                   rotation: 180,
@@ -130,11 +131,11 @@
               },
               {
                 attrs: {
-                  value: 91,
+                  theme: 'high',
+                  value: 291,
                   trend: '+1',
                   size: 200,
-                  rotation: 45,
-                  alert: true,
+                  rotation: 45
                 },
               },
             ],
@@ -154,7 +155,7 @@
                 attrs: {
                   value: '172',
                   trend: '34m ago',
-                  rotation: '180',
+                  rotation: 'off',
                   theme: 'error',
                 },
               },

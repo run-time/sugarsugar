@@ -50,7 +50,7 @@ function initializeDexcomClient() {
   return new SugarSugar(username, password, server);
 }
 
-// Health check endpoint (matches health.js serverless function)
+// Health check endpoint for API route (matches health.js serverless function)
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -59,17 +59,8 @@ app.get('/health', (req, res) => {
   });
 });
 
-// Health check endpoint for API route (matches health.js serverless function)
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    service: 'SugarSugar Dexcom API',
-  });
-});
-
 // Basic glucose endpoint (matches glucose.js serverless function)
-app.get('/api/glucose', async (req, res) => {
+app.get('/glucose', async (req, res) => {
   try {
     if (!dexcomClient) {
       dexcomClient = initializeDexcomClient();
@@ -100,6 +91,45 @@ app.get('/api/glucose', async (req, res) => {
   }
 });
 
+// Graph endpoint: get all readings for the last x hours (default 2 hours or 24 readings)
+app.get('/graph', async (req, res) => {
+  try {
+    if (!dexcomClient) {
+      dexcomClient = initializeDexcomClient();
+    }
+
+    // Parse hours from query, default to 2.0
+    const hours = parseFloat(req.query.hours) || 2.0;
+
+    // Dexcom readings are 5 minutes apart, so 12 readings per hour
+    const maxReadings = parseInt(Math.round((hours * 60) / 5)) || 24;
+
+    // We'll fetch readings for the last x hours (up to maxReadings)
+    const readings = await dexcomClient.getGlucoseReadings(maxReadings, hours * 60);
+
+    if (!readings || readings.length === 0) {
+      res.status(404).json({ error: 'No glucose readings found' });
+      return;
+    }
+
+    // Map readings to a simple array for graphing
+    const data = readings.map(r => ({
+      time: r._datetime,
+      value: r._value,
+      trend: r._trend_info
+    }));
+
+    res.json({
+      count: data.length,
+      hours,
+      readings: data,
+    });
+  } catch (error) {
+    console.error('Error fetching graph data:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
@@ -109,7 +139,8 @@ app.get('/', (req, res) => {
     note: 'This server is for local development only. Vercel deployment uses health.js and glucose.js',
     endpoints: {
       'GET /health': 'Service health check',
-      'GET /api/glucose': 'Get glucose reading (matches Vercel)',
+      'GET /glucose': 'Get last glucose reading',
+      'GET /graph': 'Get glucose readings for the last x hours (default 2 hours)',
     },
   });
 });
@@ -130,12 +161,20 @@ app.use((req, res) => {
 // Start local development server
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
-    console.log(`🍭 SugarSugar Local Dev Server running on port ${port}`);
-    console.log(`📊 Health check: http://localhost:${port}/health`);
-    console.log(`🩸 Glucose data: http://localhost:${port}/api/glucose`);
+    console.log('\n===========================================================================');
+    console.log(`SugarSugar Local Dev Server running on port [${port}]`);
+    console.log('===========================================================================');
+    console.log(`🌐 Web Service Info: http://localhost:${port}/index.html`);
+    console.log(`🩺 circle-trendicator: http://localhost:${port}/trendicators.html`);
+    console.log('---------------------------------------------------------------------------');
+    console.log(`🆗 Service /health check: http://localhost:${port}/health`);
+    console.log(`🩸 Latest /glucose reading: http://localhost:${port}/glucose`);
+    console.log(`📈 Recent /graph data: http://localhost:${port}/graph`);
+    console.log('');
     console.log(
-      '⚠️  Note: Vercel uses serverless functions (health.js, glucose.js)',
+      '⚠️  Note: Vercel uses serverless functions (health.js, glucose.js, graph.js)',
     );
+    console.log('===========================================================================\n');
   });
 }
 

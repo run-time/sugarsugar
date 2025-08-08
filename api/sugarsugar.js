@@ -7,6 +7,51 @@ import {
 } from './constants.js';
 
 class SugarSugar {
+  /**
+   * Fetch multiple glucose readings from Dexcom Share API.
+   * @param {number} maxReadings - Maximum number of readings to fetch.
+   * @param {number} minutes - How many minutes back to fetch readings for.
+   * @returns {Promise<Array>} Array of formatted readings.
+   */
+  async getGlucoseReadings(maxReadings = 24, minutes = 120) {
+    if (!this.sessionId) {
+      await this.authenticate();
+    }
+    try {
+      const url = `${this.baseUrl}${ROUTES.READ_LATEST}?sessionId=${this.sessionId}&minutes=${minutes}&maxCount=${maxReadings}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'User-Agent': 'Dexcom Share/3.0.2.11',
+        },
+      });
+      if (response.status === 500) {
+        const error = await response.json();
+        if (error.Code === 'SessionIdNotFound') {
+          this.sessionId = null;
+          return this.getGlucoseReadings(maxReadings, minutes);
+        }
+        throw new Error(`Server error: ${error.Message}`);
+      }
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+      const readings = await response.json();
+      if (!Array.isArray(readings) || readings.length === 0) {
+        throw new Error('No readings available');
+      }
+      // Format all readings
+      return readings.map(r => this.formatReading(r));
+    } catch (error) {
+      if (error.message.includes('SessionIdNotFound')) {
+        this.sessionId = null;
+        return this.getGlucoseReadings(maxReadings, minutes);
+      }
+      throw error;
+    }
+  }
   constructor(username, password, region = 'US') {
     this.username = username;
     this.password = password;
