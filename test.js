@@ -113,10 +113,10 @@ async function testAPI() {
     );
     results.push(await testEndpoint('http://localhost:3000/', 'root endpoint'));
     results.push(
-      await testEndpoint(
-        'http://localhost:3000/api/glucose',
-        'glucose endpoint',
-      ),
+      await testEndpoint('http://localhost:3000/glucose', 'glucose endpoint'),
+    );
+    results.push(
+      await testEndpoint('http://localhost:3000/graph', 'graph endpoint'),
     );
 
     // Summary

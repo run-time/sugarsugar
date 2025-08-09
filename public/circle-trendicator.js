@@ -1,3 +1,66 @@
+// a specialized trend indicator for glucose data
+// This component displays a circular trend indicator with a mini graph below it
+import './glucose-mini-graph.js';
+export function getCGMTrendicator(data) {
+  let retElement = '';
+  const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
+  const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="3"`;
+
+  if (!data || !data.value) {
+    retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;
+  } else if (data.minutes_ago > 20) {
+    retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
+  } else if (parseInt(data.value, 0) < 40) {
+    retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${benchAttrs}></circle-trendicator>`;
+  } else if (parseInt(data.value, 0) > 400) {
+    retElement = `<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high" ${benchAttrs}></circle-trendicator>`;
+  } else {
+    const trendMap = {
+      '—': 'off',
+      '⇈': '0',
+      '↑': '0',
+      '↗': '45',
+      '→': '90',
+      '↘': '135',
+      '↓': '180',
+      '⇊': '180',
+      '?': 'off',
+      '!': 'off',
+    };
+
+    const trendSymbol = data.trend.symbol || '—';
+
+    const glucoseValue = data.value;
+
+    let glucoseTrend = '';
+    if (data.value_difference) {
+      if (data.value_difference > 0) {
+        glucoseTrend = `+${data.value_difference}`;
+      } else {
+        glucoseTrend = `${data.value_difference}`;
+      }
+    }
+
+    const glucoseTheme =
+      data.status === 'LOW'
+        ? 'low'
+        : data.status === 'HIGH'
+          ? 'high'
+          : 'default';
+
+    const glucoseRotation = trendMap[trendSymbol] || 'off';
+
+    const calcAlert =
+      data.trend.symbol === '⇈' || data.trend.symbol === '⇊'
+        ? 'alert="true"'
+        : '';
+
+    retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${benchAttrs}></circle-trendicator>`;
+  }
+
+  return retElement;
+}
+
 class CircleTrendicator extends HTMLElement {
   constructor() {
     super();
@@ -44,20 +107,32 @@ class CircleTrendicator extends HTMLElement {
       this._graphElem.style.borderRadius = '12px';
       // Pass benchmark attributes if present
       if (this.hasAttribute('benchmark-high')) {
-        this._graphElem.setAttribute('benchmark-high', this.getAttribute('benchmark-high'));
+        this._graphElem.setAttribute(
+          'benchmark-high',
+          this.getAttribute('benchmark-high'),
+        );
       }
       if (this.hasAttribute('benchmark-low')) {
-        this._graphElem.setAttribute('benchmark-low', this.getAttribute('benchmark-low'));
+        this._graphElem.setAttribute(
+          'benchmark-low',
+          this.getAttribute('benchmark-low'),
+        );
       }
     } else {
       // Update attributes if they change after creation
       if (this.hasAttribute('benchmark-high')) {
-        this._graphElem.setAttribute('benchmark-high', this.getAttribute('benchmark-high'));
+        this._graphElem.setAttribute(
+          'benchmark-high',
+          this.getAttribute('benchmark-high'),
+        );
       } else {
         this._graphElem.removeAttribute('benchmark-high');
       }
       if (this.hasAttribute('benchmark-low')) {
-        this._graphElem.setAttribute('benchmark-low', this.getAttribute('benchmark-low'));
+        this._graphElem.setAttribute(
+          'benchmark-low',
+          this.getAttribute('benchmark-low'),
+        );
       } else {
         this._graphElem.removeAttribute('benchmark-low');
       }
@@ -73,7 +148,11 @@ class CircleTrendicator extends HTMLElement {
         console.log('[CircleTrendicator] Fetching graph data from', url);
         const resp = await fetch(url);
         if (!resp.ok) {
-          console.warn('[CircleTrendicator] Response not ok for', url, resp.status);
+          console.warn(
+            '[CircleTrendicator] Response not ok for',
+            url,
+            resp.status,
+          );
           continue;
         }
         data = await resp.json();
@@ -89,16 +168,21 @@ class CircleTrendicator extends HTMLElement {
       window.customElements.upgrade(this._graphElem);
     }
     if (data && data.readings && Array.isArray(data.readings)) {
-      console.log('[CircleTrendicator] Setting data on glucose-mini-graph:', data.readings);
+      console.log(
+        '[CircleTrendicator] Setting data on glucose-mini-graph:',
+        data.readings,
+      );
       this._graphElem.data = data.readings;
       this._graphElem._preloadError = null;
     } else if (error) {
       this._graphElem._preloadError = 'Error loading graph';
-      this._graphElem.innerHTML = '<div style="padding:8px;color:#c00;">Error loading graph</div>';
+      this._graphElem.innerHTML =
+        '<div style="padding:8px;color:#c00;">Error loading graph</div>';
       console.error('[CircleTrendicator] Error loading graph:', error);
     } else {
       this._graphElem._preloadError = 'No data';
-      this._graphElem.innerHTML = '<div style="padding:8px;color:#c00;">No data</div>';
+      this._graphElem.innerHTML =
+        '<div style="padding:8px;color:#c00;">No data</div>';
       console.warn('[CircleTrendicator] No data found for graph.');
     }
   }
@@ -167,7 +251,7 @@ class CircleTrendicator extends HTMLElement {
           border-radius: ${borderRadius * 0.4}px;
           box-shadow: 0 2px 8px #0002;
           pointer-events: auto;
-          margin-top: ${Math.round(size * 0.12) + ((this.rotation !== 0 && this.rotation !== 180 && this.rotation !== 'off') ? -10 : 0)}px;
+          margin-top: ${Math.round(size * 0.12) + (this.rotation !== 0 && this.rotation !== 180 && this.rotation !== 'off' ? -10 : 0)}px;
           z-index: 100;
         }
         
@@ -198,8 +282,8 @@ class CircleTrendicator extends HTMLElement {
           font-size: ${trendFontSize}px;
           color: ${this.theme === 'error' ? this.bgColor : this.fgColor};
           background-color: ${this.theme === 'error' ? this.fgColor : 'transparent'};
-          border-radius: ${this.theme === 'error' ? borderRadius + 'px' : 'unset'};
-          padding: ${this.theme === 'error' ? '0px ' + (0.5 * borderRadius).toString() + 'px' : '0'};
+          border-radius: ${this.theme === 'error' ? `${borderRadius}px` : 'unset'};
+          padding: ${this.theme === 'error' ? `0px ${(0.5 * borderRadius).toString()}px` : '0'};
           z-index: 20;
           position: relative;
           margin: 0;
@@ -242,7 +326,12 @@ class CircleTrendicator extends HTMLElement {
     if (this._graphElem) {
       const high = this.getAttribute('benchmark-high');
       const low = this.getAttribute('benchmark-low');
-      console.log('[CircleTrendicator] Passing benchmark-high:', high, 'benchmark-low:', low);
+      console.log(
+        '[CircleTrendicator] Passing benchmark-high:',
+        high,
+        'benchmark-low:',
+        low,
+      );
       if (this.hasAttribute('benchmark-high')) {
         this._graphElem.setAttribute('benchmark-high', high);
       } else {

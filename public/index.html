@@ -6,7 +6,6 @@
     <title>SugarSugar API</title>
 
     <script src="./circle-trendicator.js" type="module"></script>
-    <script src="./glucose-mini-graph.js" type="module"></script>
     <script>
       window.BENCHMARKS = {
         LOW: 60,
@@ -23,21 +22,25 @@
         line-height: 1.6;
         background: #f8f9fa;
       }
+
       .container {
         background: white;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       }
+
       h1 {
         color: #333;
         border-bottom: 3px solid #007acc;
         padding-bottom: 10px;
       }
+
       h2 {
         color: #555;
         margin-top: 30px;
       }
+
       .endpoint {
         background: #f1f3f4;
         padding: 15px;
@@ -45,19 +48,23 @@
         margin: 10px 0;
         border-left: 4px solid #007acc;
       }
+
       .endpoint code {
         background: #e8f4f8;
         padding: 2px 6px;
         border-radius: 3px;
         font-family: 'Monaco', 'Consolas', monospace;
       }
+
       a {
         color: #007acc;
         text-decoration: none;
       }
+
       a:hover {
         text-decoration: underline;
       }
+
       .status {
         display: inline-block;
         padding: 4px 8px;
@@ -65,10 +72,12 @@
         font-size: 0.9em;
         font-weight: bold;
       }
+
       .status.live {
         background: #d4edda;
         color: #155724;
       }
+
       .footer {
         margin-top: 40px;
         padding-top: 20px;
@@ -76,11 +85,13 @@
         text-align: center;
         color: #666;
       }
+
       .glucose-container {
         font-family: system-ui;
       }
     </style>
   </head>
+
   <body>
     <div class="container">
       <h1>🍭 SugarSugar API</h1>
@@ -124,7 +135,9 @@
       <ul>
         <li><a href="/health" target="_blank">Health Check</a></li>
         <li><a href="/glucose" target="_blank">Latest Glucose Reading</a></li>
-        <li><a href="/graph" target="_blank">Last 2 hours of Glucose Data</a></li>
+        <li>
+          <a href="/graph" target="_blank">Last 2 hours of Glucose Data</a>
+        </li>
       </ul>
 
       <h2>/health</h2>
@@ -139,7 +152,9 @@
       <h2>📖 Documentation</h2>
       <p>
         For complete setup instructions and API documentation, visit the
-        <a href="https://github.com/run-time/sugarsugar" target="_blank">GitHub repository</a>.
+        <a href="https://github.com/run-time/sugarsugar" target="_blank"
+          >GitHub repository</a
+        >.
       </p>
 
       <div class="footer">
@@ -180,6 +195,10 @@
         }
       }
       fetchGraph();
+    </script>
+
+    <script type="module">
+      import { getCGMTrendicator } from './circle-trendicator.js';
 
       // Simple script to fetch and display API data
       async function fetchGlucose() {
@@ -190,70 +209,8 @@
 
           const data = await response.json();
 
-          const getTrendicator = (data) => {
-            let retElement = '';
-            // Use BENCHMARKS from window (populated by constants.js)
-            const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
-            const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="3"`;
-
-            if (!data || !data.value) {
-              retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;
-            } else if (data.minutes_ago > 20) {
-              retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
-            } else if (parseInt(data.value, 0) < 40) {
-              retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${benchAttrs}></circle-trendicator>`;
-            } else if (parseInt(data.value, 0) > 400) {
-              retElement =
-                `<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high" ${benchAttrs}></circle-trendicator>`;
-            } else {
-              const trendMap = {
-                '—': 'off',
-                '⇈': '0',
-                '↑': '0',
-                '↗': '45',
-                '→': '90',
-                '↘': '135',
-                '↓': '180',
-                '⇊': '180',
-                '?': 'off',
-                '!': 'off',
-              };
-
-              let trendSymbol = data.trend.symbol || '—';
-
-              const glucoseValue = data.value;
-
-              let glucoseTrend = '';
-              if (data.value_difference) {
-                if (data.value_difference > 0) {
-                  glucoseTrend = `+${data.value_difference}`;
-                } else {
-                  glucoseTrend = `${data.value_difference}`;
-                }
-              }
-
-              let glucoseTheme =
-                data.status === 'LOW'
-                  ? 'low'
-                  : data.status === 'HIGH'
-                    ? 'high'
-                    : 'default';
-
-              const glucoseRotation = trendMap[trendSymbol] || 'off';
-
-              const calcAlert =
-                data.trend.symbol === '⇈' || data.trend.symbol === '⇊'
-                  ? `alert="true"`
-                  : '';
-
-              retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${benchAttrs}></circle-trendicator>`;
-            }
-
-            return retElement;
-          };
-
           document.getElementById('output_glucose_indicator').innerHTML =
-            getTrendicator(data);
+            getCGMTrendicator(data);
           document.getElementById('output_glucose_json').innerHTML =
             `<pre>${JSON.stringify(data, null, 2)}</pre>`;
         } catch (error) {
