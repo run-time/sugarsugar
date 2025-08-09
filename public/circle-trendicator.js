@@ -142,7 +142,10 @@ class CircleTrendicator extends HTMLElement {
     let error = null;
     let lastUrl = null;
     const hours = this.hoursOfHistory;
-    for (const url of [`/graph?hours=${hours}`, `/api/graph?hours=${hours}`]) {
+    for (const url of [
+      `/graph?hours=${hours}`,
+      `https://sugarsugar.vercel.app/graph?hours=${hours}`,
+    ]) {
       try {
         lastUrl = url;
         console.log('[CircleTrendicator] Fetching graph data from', url);
