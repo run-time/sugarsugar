@@ -27,7 +27,10 @@ export default async function handler(req, res) {
     const maxReadings = parseInt(Math.round((hours * 60) / 5)) || 24;
 
     // We'll fetch readings for the last x hours (up to maxReadings)
-    const readings = await dexcomClient.getGlucoseReadings(maxReadings, hours * 60);
+    const readings = await dexcomClient.getGlucoseReadings(
+      maxReadings,
+      hours * 60,
+    );
 
     if (!readings || readings.length === 0) {
       res.status(404).json({ error: 'No glucose readings found' });
@@ -35,10 +38,10 @@ export default async function handler(req, res) {
     }
 
     // Map readings to a simple array for graphing
-    const data = readings.map(r => ({
+    const data = readings.map((r) => ({
       time: r._datetime,
       value: r._value,
-      trend: r._trend_info
+      trend: r._trend_info,
     }));
 
     res.status(200).json({

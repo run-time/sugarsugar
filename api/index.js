@@ -105,7 +105,10 @@ app.get('/graph', async (req, res) => {
     const maxReadings = parseInt(Math.round((hours * 60) / 5)) || 24;
 
     // We'll fetch readings for the last x hours (up to maxReadings)
-    const readings = await dexcomClient.getGlucoseReadings(maxReadings, hours * 60);
+    const readings = await dexcomClient.getGlucoseReadings(
+      maxReadings,
+      hours * 60,
+    );
 
     if (!readings || readings.length === 0) {
       res.status(404).json({ error: 'No glucose readings found' });
@@ -113,10 +116,10 @@ app.get('/graph', async (req, res) => {
     }
 
     // Map readings to a simple array for graphing
-    const data = readings.map(r => ({
+    const data = readings.map((r) => ({
       time: r._datetime,
       value: r._value,
-      trend: r._trend_info
+      trend: r._trend_info,
     }));
 
     res.json({
@@ -140,7 +143,8 @@ app.get('/', (req, res) => {
     endpoints: {
       'GET /health': 'Service health check',
       'GET /glucose': 'Get last glucose reading',
-      'GET /graph': 'Get glucose readings for the last x hours (default 2 hours)',
+      'GET /graph':
+        'Get glucose readings for the last x hours (default 2 hours)',
     },
   });
 });
@@ -161,12 +165,20 @@ app.use((req, res) => {
 // Start local development server
 if (process.env.NODE_ENV !== 'production') {
   app.listen(port, () => {
-    console.log('\n===========================================================================');
+    console.log(
+      '\n===========================================================================',
+    );
     console.log(`SugarSugar Local Dev Server running on port [${port}]`);
-    console.log('===========================================================================');
+    console.log(
+      '===========================================================================',
+    );
     console.log(`🌐 Web Service Info: http://localhost:${port}/index.html`);
-    console.log(`🩺 circle-trendicator: http://localhost:${port}/trendicators.html`);
-    console.log('---------------------------------------------------------------------------');
+    console.log(
+      `🩺 circle-trendicator: http://localhost:${port}/trendicators.html`,
+    );
+    console.log(
+      '---------------------------------------------------------------------------',
+    );
     console.log(`🆗 Service /health check: http://localhost:${port}/health`);
     console.log(`🩸 Latest /glucose reading: http://localhost:${port}/glucose`);
     console.log(`📈 Recent /graph data: http://localhost:${port}/graph`);
@@ -174,7 +186,9 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(
       '⚠️  Note: Vercel uses serverless functions (health.js, glucose.js, graph.js)',
     );
-    console.log('===========================================================================\n');
+    console.log(
+      '===========================================================================\n',
+    );
   });
 }
 

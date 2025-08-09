@@ -1,6 +1,39 @@
 // a specialized trend indicator for glucose data
 // This component displays a circular trend indicator with a mini graph below it
 import './glucose-mini-graph.js';
+
+// --- Display window state ---
+// Store the full 6-hour data set and current display window globally
+window._glucoseFullData = null; // full 6-hour data
+window._glucoseDisplayWindow = 2; // default hours to show
+window._glucoseDisplayWindowOptions = [2, 4, 6, 8]; // allowed window sizes
+
+// Helper to update all mini-graphs with the current window
+function updateMiniGraphsDisplayWindow() {
+  const allGraphs = document.querySelectorAll('glucose-mini-graph');
+  allGraphs.forEach((graph) => {
+    if (window._glucoseFullData && Array.isArray(window._glucoseFullData)) {
+      // Slice the data for the current window
+      const hours = window._glucoseDisplayWindow;
+      const now = Date.now();
+      const msWindow = hours * 60 * 60 * 1000;
+      const filtered = window._glucoseFullData.filter((r) => {
+        const t = new Date(r.time).getTime();
+        return now - t <= msWindow;
+      });
+      // Always update data and force render, even if hidden
+      if (typeof graph.updateData === 'function') {
+        graph.updateData(filtered);
+      } else {
+        graph.data = filtered;
+      }
+      // If the graph is hidden, force a render so it will be correct when shown
+      if (graph.style && graph.style.display === 'none') {
+        graph.render && graph.render();
+      }
+    }
+  });
+}
 export function getCGMTrendicator(data) {
   let retElement = '';
   const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
@@ -141,7 +174,8 @@ class CircleTrendicator extends HTMLElement {
     let data = null;
     let error = null;
     let lastUrl = null;
-    const hours = this.hoursOfHistory;
+    // Always fetch 8 hours for full data set (to support all window options)
+    const hours = 8;
     for (const url of [
       `/graph?hours=${hours}`,
       `https://sugarsugar.vercel.app/graph?hours=${hours}`,
@@ -171,12 +205,30 @@ class CircleTrendicator extends HTMLElement {
       window.customElements.upgrade(this._graphElem);
     }
     if (data && data.readings && Array.isArray(data.readings)) {
-      console.log(
-        '[CircleTrendicator] Setting data on glucose-mini-graph:',
-        data.readings,
-      );
-      this._graphElem.data = data.readings;
+      // Store full data globally
+      window._glucoseFullData = data.readings;
+      // Set initial display window if not set
+      if (!window._glucoseDisplayWindow) window._glucoseDisplayWindow = 2;
+      // Slice for current window
+      const hours = window._glucoseDisplayWindow;
+      const now = Date.now();
+      const msWindow = hours * 60 * 60 * 1000;
+      const filtered = data.readings.filter((r) => {
+        const t = new Date(r.time).getTime();
+        return now - t <= msWindow;
+      });
+      this._graphElem.data = filtered;
       this._graphElem._preloadError = null;
+      // Do not add a click handler here; glucose-mini-graph.js handles cycling
+      // Also allow clicking the circle trendicator to cycle window
+      this.addEventListener('dblclick', (e) => {
+        e.stopPropagation();
+        const opts = window._glucoseDisplayWindowOptions;
+        let idx = opts.indexOf(window._glucoseDisplayWindow);
+        idx = (idx + 1) % opts.length;
+        window._glucoseDisplayWindow = opts[idx];
+        updateMiniGraphsDisplayWindow();
+      });
     } else if (error) {
       this._graphElem._preloadError = 'Error loading graph';
       this._graphElem.innerHTML =

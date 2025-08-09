@@ -18,7 +18,8 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "verify": "npm install && npm run lint:fix && npm run format:fix && npm test && npm run build"
   },
   "keywords": [
     "dexcom",

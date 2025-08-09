@@ -43,7 +43,7 @@ class SugarSugar {
         throw new Error('No readings available');
       }
       // Format all readings
-      return readings.map(r => this.formatReading(r));
+      return readings.map((r) => this.formatReading(r));
     } catch (error) {
       if (error.message.includes('SessionIdNotFound')) {
         this.sessionId = null;
