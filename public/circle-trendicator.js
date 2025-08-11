@@ -75,11 +75,15 @@ export function getCGMTrendicator(data) {
     }
 
     const glucoseTheme =
-      data.status === 'LOW'
-        ? 'low'
-        : data.status === 'HIGH'
-          ? 'high'
-          : 'default';
+      parseInt(data.value) === 39
+        ? 'maxlow'
+        : parseInt(data.value) === 401
+          ? 'maxhigh'
+          : data.status === 'LOW'
+            ? 'low'
+            : data.status === 'HIGH'
+              ? 'high'
+              : 'default';
 
     const glucoseRotation = trendMap[trendSymbol] || 'off';
 
@@ -138,7 +142,7 @@ class CircleTrendicator extends HTMLElement {
       this._graphElem.style.display = 'block';
       this._graphElem.style.boxShadow = '0 2px 8px #0002';
       this._graphElem.style.borderRadius = '12px';
-      // Pass benchmark attributes if present
+      // Pass benchmark and rotation attributes if present
       if (this.hasAttribute('benchmark-high')) {
         this._graphElem.setAttribute(
           'benchmark-high',
@@ -150,6 +154,9 @@ class CircleTrendicator extends HTMLElement {
           'benchmark-low',
           this.getAttribute('benchmark-low'),
         );
+      }
+      if (this.hasAttribute('rotation')) {
+        this._graphElem.setAttribute('rotation', this.getAttribute('rotation'));
       }
     } else {
       // Update attributes if they change after creation
@@ -168,6 +175,11 @@ class CircleTrendicator extends HTMLElement {
         );
       } else {
         this._graphElem.removeAttribute('benchmark-low');
+      }
+      if (this.hasAttribute('rotation')) {
+        this._graphElem.setAttribute('rotation', this.getAttribute('rotation'));
+      } else {
+        this._graphElem.removeAttribute('rotation');
       }
     }
     this._graphElem.innerHTML = '<div style="padding:8px;">Loading…</div>';
@@ -253,21 +265,22 @@ class CircleTrendicator extends HTMLElement {
     const trendFontSize = Math.round(size * 0.14);
     const indicatorArrowElement =
       this.rotation === 'off' ? '' : '<div class="arrow-indicator"></div>';
-    const alertArrowTop = Math.round(size * 1.071);
-    const alertArrowRight = Math.round(size * 0.414);
-    const alertArrowFontSize = Math.round(size * 0.343);
     const alertSignal = this.alert
       ? `
-      .arrow-indicator::after {
-        display: block;
-        content: "⇲";
-        font-size: ${alertArrowFontSize}px;
-        color: #ffffff;
-        position: relative;
-        top: ${alertArrowTop}px;
-        right: ${alertArrowRight}px;
+      .arrow-indicator::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: ${size}px;
+        height: ${size}px;
+        background-color: #fff;
+        border: 0px;
+        border-radius: 50% 50% 50% 0;
+        transform: rotate(360deg);
         z-index: 4;
-        transform: rotate(90deg);
+        display: block;
+        pointer-events: none;
       }
     `
       : '';
@@ -316,7 +329,13 @@ class CircleTrendicator extends HTMLElement {
 
         .inner-border {
           position: absolute;
-          inset: 0;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          width: 100%;
+          height: 100%;
+          box-sizing: border-box;
           border-radius: 50%;
           border: ${innerBorderWidth}px solid white;
         }
@@ -401,6 +420,10 @@ class CircleTrendicator extends HTMLElement {
     if (this._graphVisible && this._graphElem) {
       if (!slot.contains(this._graphElem)) {
         slot.appendChild(this._graphElem);
+        // Always reset cycling state after attaching
+        if (typeof this._graphElem.resetDisplayWindow === 'function') {
+          this._graphElem.resetDisplayWindow();
+        }
         // Set data again after attaching to DOM to ensure rendering
         if (this._graphElem._preloadError == null && this._graphElem._data) {
           this._graphElem.data = this._graphElem._data;
@@ -413,6 +436,15 @@ class CircleTrendicator extends HTMLElement {
 
   _onClick(e) {
     e.stopPropagation();
+    // If opening the mini graph, reset the mini-graph's local cycling state only
+    if (!this._graphVisible) {
+      if (
+        this._graphElem &&
+        typeof this._graphElem.resetDisplayWindow === 'function'
+      ) {
+        this._graphElem.resetDisplayWindow();
+      }
+    }
     this._graphVisible = !this._graphVisible;
     this.render();
   }
@@ -435,11 +467,23 @@ class CircleTrendicator extends HTMLElement {
         ind: '#909090',
         alert: '#ccaa60',
       },
+      maxhigh: {
+        fg: '#000000',
+        bg: '#ffcc3c',
+        ind: '#ffcc3c',
+        alert: '#ffcc3c',
+      },
       low: {
         fg: '#ffffff',
         bg: '#f43c44',
         ind: '#909090',
         alert: '#cc6060',
+      },
+      maxlow: {
+        fg: '#ffffff',
+        bg: '#f43c44',
+        ind: '#f43c44',
+        alert: '#f43c44',
       },
       error: {
         fg: '#cc6060',

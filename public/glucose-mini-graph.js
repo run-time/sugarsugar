@@ -3,45 +3,57 @@ const COLORS = {
   bg: '#111',
   title: '#fff',
   high: '#ffd600',
-  highStroke: '#ffd600',
   low: '#e53935',
-  lowStroke: '#e53935',
   default: '#469dea',
-  defaultStroke: '#469dea',
   tooltipBg: '#111',
   tooltipText: '#fff',
 };
 
 class GlucoseMiniGraph extends HTMLElement {
+  constructor() {
+    super();
+    this._displayWindowOptions = [2, 4, 6, 8];
+    this._displayWindowIdx = 0;
+  }
+  // ...existing code...
   connectedCallback() {
-    // Add click event to cycle hour window and force redraw
-    this.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (
-        window._glucoseFullData &&
-        Array.isArray(window._glucoseFullData) &&
-        window._glucoseDisplayWindowOptions
-      ) {
-        const opts = window._glucoseDisplayWindowOptions;
-        let idx = opts.indexOf(window._glucoseDisplayWindow);
-        if (idx === -1) idx = 0;
-        idx = (idx + 1) % opts.length;
-        window._glucoseDisplayWindow = opts[idx];
-        // Slice the data for the new window
-        const hours = window._glucoseDisplayWindow;
-        const now = Date.now();
-        const msWindow = hours * 60 * 60 * 1000;
-        const filtered = window._glucoseFullData.filter((r) => {
-          const t = new Date(r.time).getTime();
-          return now - t <= msWindow;
-        });
-        this.updateData(filtered);
-        // Also update all other graphs
-        if (typeof window.updateMiniGraphsDisplayWindow === 'function') {
-          window.updateMiniGraphsDisplayWindow();
+    // Use local state for cycling (already set in constructor)
+    this._updateDisplayWindow();
+    // Guard: only attach one click listener per instance
+    if (!this._hasClickListener) {
+      this.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (window._glucoseFullData && Array.isArray(window._glucoseFullData)) {
+          this._displayWindowIdx =
+            (this._displayWindowIdx + 1) % this._displayWindowOptions.length;
+          this._updateDisplayWindow();
         }
-      }
-    });
+      });
+      this._hasClickListener = true;
+    }
+  }
+
+  _updateDisplayWindow() {
+    if (!this._displayWindowOptions || !this._displayWindowOptions.length) {
+      this._displayWindowOptions = [2, 4, 6, 8];
+    }
+    const hours = this._displayWindowOptions[this._displayWindowIdx] || 2;
+    this._currentDisplayWindow = hours;
+    if (window._glucoseFullData && Array.isArray(window._glucoseFullData)) {
+      const now = Date.now();
+      const msWindow = hours * 60 * 60 * 1000;
+      const filtered = window._glucoseFullData.filter((r) => {
+        const t = new Date(r.time).getTime();
+        return now - t <= msWindow;
+      });
+      this.updateData(filtered);
+    }
+  }
+
+  // Reset cycling to the first option and update data
+  resetDisplayWindow() {
+    this._displayWindowIdx = 0;
+    this._updateDisplayWindow();
   }
   // Allow external update of data (for display window changes)
   updateData(newData) {
@@ -113,71 +125,45 @@ class GlucoseMiniGraph extends HTMLElement {
     const xStep = (width - 2 * margin) / (readings.length - 1);
     const y = (v) =>
       height - margin - ((v - min) / (max - min || 1)) * (height - 2 * margin);
-    const points = readings.map((r, i) => ({
-      x: margin + i * xStep,
-      y: y(r.value),
-      value: r.value,
-    }));
+    // ...existing code...
     const lowY = y(LOW);
     const highY = y(HIGH);
     // Show the current display window in the title if available
-    let hours = 2;
-    if (window._glucoseDisplayWindow) {
-      hours = window._glucoseDisplayWindow;
-    } else if (readings.length > 1) {
-      const t0 = new Date(readings[0].time).getTime();
-      const tN = new Date(readings[readings.length - 1].time).getTime();
-      const mins = Math.abs(t0 - tN) / 1000 / 60;
-      if (mins >= 60) {
-        hours = Math.round(mins / 60);
-      } else {
-        hours = Math.max(+(mins / 60).toFixed(1), 1.0);
-      }
-    }
+    // Use the local display window for the header
+    const hours =
+      this._currentDisplayWindow !== undefined
+        ? this._currentDisplayWindow
+        : (this._displayWindowOptions && this._displayWindowOptions[0]) || 2;
     const title = `<div style="font-size:13px;font-weight:500;text-align:center;margin-bottom:2px;color:${COLORS.title};">Last ${hours} hour${hours == 1 ? '' : 's'}</div>`;
-    // Adjust vertical offset based on rotation: if not 0 or 180, move up by 10px
-    const offset = this.rotation !== 0 && this.rotation !== 180 ? -10 : 0;
+    let offset = 8;
+    if (this.rotation === 180) {
+      offset = 40;
+    }
     this.innerHTML = `
       <style>
         .mini-graph-bg { fill: #f7f7f7; }
         .mini-graph-dot { fill: ${COLORS.default}; }
         .mini-graph-dot.low { fill: ${COLORS.low}; }
         .mini-graph-dot.high { fill: ${COLORS.high}; stroke: ${COLORS.highStroke}; stroke-width: 1; }
-        .mini-graph-bench-low { stroke: ${COLORS.low}; stroke-width: 1.5; stroke-dasharray: 4 2; }
-        .mini-graph-bench-high { stroke: ${COLORS.high}; stroke-width: 1.5; stroke-dasharray: 4 2; }
+  .mini-graph-bench-low { stroke: ${COLORS.low}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
+  .mini-graph-bench-high { stroke: ${COLORS.high}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
       </style>
-      <div style="position:relative; top: ${offset}px;">
+  <div style="margin-top: ${offset}px;">
         ${title}
         <svg width="${width}" height="${height}">
           <rect class="mini-graph-bg" x="0" y="0" width="${width}" height="${height}" />
           <!-- Shaded area above high line -->
-          <rect x="0" y="0" width="${width}" height="${Math.max(0, highY)}" fill="${COLORS.high}" fill-opacity="0.2" />
+          <rect x="0" y="0" width="${width}" height="${Math.max(0, highY)}" fill="${COLORS.high}" fill-opacity="0.1" />
           <!-- Shaded area below low line -->
-          <rect x="0" y="${Math.min(height, lowY)}" width="${width}" height="${Math.max(0, height - lowY)}" fill="${COLORS.low}" fill-opacity="0.2" />
+          <rect x="0" y="${Math.min(height, lowY)}" width="${width}" height="${Math.max(0, height - lowY)}" fill="${COLORS.low}" fill-opacity="0.1" />
           <line class="mini-graph-bench-low" x1="0" x2="${width}" y1="${lowY}" y2="${lowY}" />
           <line class="mini-graph-bench-high" x1="0" x2="${width}" y1="${highY}" y2="${highY}" />
-          ${
-            points.length > 1
-              ? points
-                  .map((pt, i) => {
-                    if (i === 0) return '';
-                    const prev = points[i - 1];
-                    let color = COLORS.defaultStroke;
-                    if (pt.value > HIGH || prev.value > HIGH)
-                      color = COLORS.highStroke;
-                    else if (pt.value < LOW || prev.value < LOW)
-                      color = COLORS.lowStroke;
-                    return `<line x1="${prev.x}" y1="${prev.y}" x2="${pt.x}" y2="${pt.y}" stroke="${color}" stroke-width="2" fill="none" />`;
-                  })
-                  .join('')
-              : ''
-          }
           ${readings
             .map((r, i) => {
               let cls = 'mini-graph-dot';
               if (r.value < LOW) cls += ' low';
               else if (r.value > HIGH) cls += ' high';
-              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="2.8"/>`;
+              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="1.7"/>`;
             })
             .join('')}
         </svg>
@@ -209,12 +195,18 @@ class GlucoseMiniGraph extends HTMLElement {
         m = m.toString().padStart(2, '0');
         const timeStr = `${h}:${m}${ampm}`;
         let color = COLORS.default;
+        let valueDisplay = r.value;
+        if (r.value === 39) {
+          valueDisplay = 'LOW';
+        } else if (r.value === 401) {
+          valueDisplay = 'HIGH';
+        }
         if (r.value < LOW) color = COLORS.low;
         else if (r.value > HIGH) color = COLORS.high;
         tooltip.innerHTML =
           `<span style="background:${COLORS.tooltipBg};color:${COLORS.tooltipText};padding:2px 7px 2px 7px;font-size:13px;white-space:nowrap;display:inline-block;">` +
           `<span style='color:${COLORS.tooltipText};'>${timeStr}</span>&nbsp;` +
-          `<span style="font-weight:bold;color:${color}">${r.value}</span></span>`;
+          `<span style="font-weight:bold;color:${color}">${valueDisplay}</span></span>`;
         tooltip.style.display = 'block';
         const rect = pt.getBoundingClientRect();
         const parentRect = this.getBoundingClientRect();
@@ -228,29 +220,3 @@ class GlucoseMiniGraph extends HTMLElement {
   }
 }
 customElements.define('glucose-mini-graph', GlucoseMiniGraph);
-
-// Patch global updateMiniGraphsDisplayWindow to use updateData if available
-if (
-  typeof window !== 'undefined' &&
-  typeof window.updateMiniGraphsDisplayWindow === 'function'
-) {
-  window.updateMiniGraphsDisplayWindow = function () {
-    const allGraphs = document.querySelectorAll('glucose-mini-graph');
-    allGraphs.forEach((graph) => {
-      if (window._glucoseFullData && Array.isArray(window._glucoseFullData)) {
-        const hours = window._glucoseDisplayWindow;
-        const now = Date.now();
-        const msWindow = hours * 60 * 60 * 1000;
-        const filtered = window._glucoseFullData.filter((r) => {
-          const t = new Date(r.time).getTime();
-          return now - t <= msWindow;
-        });
-        if (typeof graph.updateData === 'function') {
-          graph.updateData(filtered);
-        } else {
-          graph.data = filtered;
-        }
-      }
-    });
-  };
-}
