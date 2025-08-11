@@ -163,7 +163,7 @@ class GlucoseMiniGraph extends HTMLElement {
               let cls = 'mini-graph-dot';
               if (r.value < LOW) cls += ' low';
               else if (r.value > HIGH) cls += ' high';
-              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="2"/>`;
+              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="2.6"/>`;
             })
             .join('')}
         </svg>
