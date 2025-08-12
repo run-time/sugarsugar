@@ -144,7 +144,7 @@ class GlucoseMiniGraph extends HTMLElement {
         .mini-graph-bg { fill: #f7f7f7; }
         .mini-graph-dot { fill: ${COLORS.default}; }
         .mini-graph-dot.low { fill: ${COLORS.low}; }
-        .mini-graph-dot.high { fill: ${COLORS.high}; stroke: ${COLORS.highStroke}; stroke-width: 1; }
+        .mini-graph-dot.high { fill: ${COLORS.high}; }
   .mini-graph-bench-low { stroke: ${COLORS.low}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
   .mini-graph-bench-high { stroke: ${COLORS.high}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
       </style>
@@ -163,7 +163,7 @@ class GlucoseMiniGraph extends HTMLElement {
               let cls = 'mini-graph-dot';
               if (r.value < LOW) cls += ' low';
               else if (r.value > HIGH) cls += ' high';
-              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="1.7"/>`;
+              return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="2.6"/>`;
             })
             .join('')}
         </svg>
