@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Centered Circle Trendicator</title>
+    <script type="module" src="./circle-trendicator.js"></script>
+    <style>
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #000;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        min-width: 100vw;
+      }
+      #trendicator-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100vw;
+        height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="trendicator-container"></div>
+    <script>
+      function getCircleSize() {
+        // Use 60% of the smaller viewport dimension
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        return Math.floor(Math.min(w, h) * 0.6);
+      }
+
+      async function fetchGlucoseData() {
+        try {
+          const resp = await fetch('https://sugarsugar.vercel.app/glucose');
+          if (!resp.ok) throw new Error('Network response was not ok');
+          return await resp.json();
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function renderTrendicator() {
+        const container = document.getElementById('trendicator-container');
+        container.innerHTML = '';
+        const size = getCircleSize();
+        const data = await fetchGlucoseData();
+        const el = document.createElement('circle-trendicator');
+        if (data) {
+          el.setAttribute('value', data.value ?? '??');
+          el.setAttribute(
+            'trend',
+            data.value_difference !== undefined
+              ? data.value_difference > 0
+                ? `+${data.value_difference}`
+                : `${data.value_difference}`
+              : '?',
+          );
+          el.setAttribute(
+            'rotation',
+            data.trend && data.trend.symbol
+              ? (function (symbol) {
+                  const map = {
+                    '—': 'off',
+                    '⇈': '0',
+                    '↑': '0',
+                    '↗': '45',
+                    '→': '90',
+                    '↘': '135',
+                    '↓': '180',
+                    '⇊': '180',
+                    '?': 'off',
+                    '!': 'off',
+                  };
+                  return map[symbol] ?? 'off';
+                })(data.trend.symbol)
+              : 'off',
+          );
+          el.setAttribute(
+            'theme',
+            data.status === 'LOW'
+              ? 'low'
+              : data.status === 'HIGH'
+                ? 'high'
+                : 'default',
+          );
+        } else {
+          el.setAttribute('value', '??');
+          el.setAttribute('trend', '?');
+          el.setAttribute('rotation', 'off');
+          el.setAttribute('theme', 'error');
+        }
+        el.setAttribute('size', size);
+        container.appendChild(el);
+      }
+
+      window.addEventListener('resize', renderTrendicator);
+      window.addEventListener('DOMContentLoaded', renderTrendicator);
+    </script>
+  </body>
+</html>
