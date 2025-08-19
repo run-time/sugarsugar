@@ -42,7 +42,7 @@ export function getCGMTrendicator(data) {
   if (!data || !data.value) {
     retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;
   } else if (data.minutes_ago > 20) {
-    retElement = `<circle-trendicator value="${data.value}" trend="last reading ${data.minutes_ago} minutes ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="${data.value}" trend="${data.minutes_ago}m ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
   } else if (parseInt(data.value, 0) < 40) {
     retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${benchAttrs}></circle-trendicator>`;
   } else if (parseInt(data.value, 0) > 400) {
