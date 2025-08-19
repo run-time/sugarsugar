@@ -37,7 +37,7 @@ function updateMiniGraphsDisplayWindow() {
 export function getCGMTrendicator(data) {
   let retElement = '';
   const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
-  const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="3"`;
+  const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="2"`;
 
   if (!data || !data.value) {
     retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;

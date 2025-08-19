@@ -1,0 +1,195 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`UI public/trendicators.html > should return 200 OK and render the expected HTML 1`] = `
+"<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SugarSugar API</title>
+    <script src="./circle-trendicator.js" type="module"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        line-height: 1.6;
+        background: #f8f9fa;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      .card {
+        padding: 20px;
+        border-radius: 6px;
+        margin: 10px 0;
+      }
+      .bordered {
+        border: 3px dashed #e0e0e0;
+        margin-bottom: 20px;
+        padding: 0 10px 40px 10px;
+      }
+      h1 {
+        color: #333;
+        border-bottom: 3px solid #007acc;
+        padding-bottom: 10px;
+      }
+      h2 {
+        color: #444;
+        margin: 0;
+      }
+      .code {
+        background: #e8f4f8;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Monaco', 'Consolas', monospace;
+      }
+      a {
+        color: #007acc;
+        text-decoration: none;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>&lt;circle-trendicator&gt;</h1>
+
+      <div class="card" id="examples"></div>
+
+      <script>
+        const trendicatorExampleGroups = [
+          {
+            title: 'Basic Usage',
+            examples: [{ attrs: { value: 92, trend: '+2' } }],
+          },
+          {
+            title: 'Low Readings',
+            examples: [
+              { attrs: { value: 62, trend: '-3', theme: 'low' } },
+              { attrs: { value: 48, trend: '+4', theme: 'low', rotation: 45 } },
+              {
+                attrs: {
+                  value: 57,
+                  trend: '-11',
+                  theme: 'low',
+                  rotation: 180,
+                  alert: true,
+                },
+              },
+              {
+                attrs: {
+                  value: 'LOW',
+                  trend: 'below 40',
+                  theme: 'maxlow',
+                  rotation: 'off',
+                },
+              },
+            ],
+          },
+          {
+            title: 'High Readings',
+            examples: [
+              {
+                attrs: { value: 245, trend: '+9', theme: 'high', rotation: 0 },
+              },
+              {
+                attrs: {
+                  value: 311,
+                  trend: '-6',
+                  theme: 'high',
+                  rotation: 135,
+                },
+              },
+              {
+                attrs: {
+                  value: 'HIGH',
+                  trend: 'above 400',
+                  theme: 'maxhigh',
+                  rotation: 'off',
+                },
+              },
+            ],
+          },
+          {
+            title: 'Sizes',
+            examples: [
+              { attrs: { value: 91, trend: 'default=140', size: 140 } },
+              {
+                attrs: {
+                  theme: 'low',
+                  value: 45,
+                  trend: '-6',
+                  size: 100,
+                  rotation: 180,
+                  alert: true,
+                },
+              },
+              {
+                attrs: {
+                  theme: 'high',
+                  value: 291,
+                  trend: '+1',
+                  size: 200,
+                  rotation: 45,
+                },
+              },
+            ],
+          },
+          {
+            title: 'Error State',
+            examples: [
+              {
+                attrs: {
+                  value: '?',
+                  trend: 'no data',
+                  rotation: 'off',
+                  theme: 'error',
+                },
+              },
+              {
+                attrs: {
+                  value: '172',
+                  trend: '34m ago',
+                  rotation: 'off',
+                  theme: 'error',
+                },
+              },
+            ],
+          },
+        ];
+
+        const container = document.getElementById('examples');
+        trendicatorExampleGroups.forEach((group) => {
+          const card = document.createElement('div');
+          card.className = 'card';
+          let html = \`<h2>\${group.title}</h2>\`;
+          group.examples.forEach((ex) => {
+            const attrStr = Object.entries(ex.attrs)
+              .map(([k, v]) => \`\${k}="\${v}"\`)
+              .join(' ');
+            html += \`
+              <div class="bordered">
+              <p><code class="code">&lt;circle-trendicator \${attrStr}&gt;&lt;/circle-trendicator&gt;</code></p>
+              <br>
+              <circle-trendicator \${attrStr}></circle-trendicator>
+              <br><br>
+              </div>
+            \`;
+          });
+          card.innerHTML = html;
+          container.appendChild(card);
+        });
+      </script>
+    </div>
+  </body>
+</html>
+"
+`;

@@ -1,0 +1,8 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GET /health > should return 200 OK and valid health response 1`] = `
+{
+  "service": "SugarSugar Dexcom API",
+  "status": "ok",
+}
+`;

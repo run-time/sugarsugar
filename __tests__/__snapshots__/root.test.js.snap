@@ -1,0 +1,246 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`GET / > should return 200 OK and valid root response 1`] = `
+{
+  "description": "Local development server - Vercel uses serverless functions",
+  "endpoints": {
+    "GET /glucose": "Get last glucose reading",
+    "GET /graph": "Get glucose readings for the last x hours (default 2 hours)",
+    "GET /health": "Service health check",
+  },
+  "name": "SugarSugar API (Local Development)",
+  "note": "This server is for local development only. Vercel deployment uses health.js and glucose.js",
+  "version": "1.0.0",
+}
+`;
+
+exports[`UI public/index.html > should return 200 OK and render the landing page 1`] = `
+"<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SugarSugar API</title>
+
+    <script src="./circle-trendicator.js" type="module"></script>
+    <script>
+      window.BENCHMARKS = {
+        LOW: 60,
+        HIGH: 240,
+      };
+    </script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        max-width: 800px;
+        margin: 50px auto;
+        padding: 20px;
+        line-height: 1.6;
+        background: #f8f9fa;
+      }
+
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #333;
+        border-bottom: 3px solid #007acc;
+        padding-bottom: 10px;
+      }
+
+      h2 {
+        color: #555;
+        margin-top: 30px;
+      }
+
+      .endpoint {
+        background: #f1f3f4;
+        padding: 15px;
+        border-radius: 5px;
+        margin: 10px 0;
+        border-left: 4px solid #007acc;
+      }
+
+      .endpoint code {
+        background: #e8f4f8;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-family: 'Monaco', 'Consolas', monospace;
+      }
+
+      a {
+        color: #007acc;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 0.9em;
+        font-weight: bold;
+      }
+
+      .status.live {
+        background: #d4edda;
+        color: #155724;
+      }
+
+      .footer {
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #eee;
+        text-align: center;
+        color: #666;
+      }
+
+      .glucose-container {
+        font-family: system-ui;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <h1>🍭 SugarSugar API</h1>
+      <p>
+        <strong
+          >A webservice to ask Dexcom Share servers for blood glucose
+          data</strong
+        >
+      </p>
+      <p><span class="status live">LIVE</span> API Version 1.0.0</p>
+
+      <h2>📊 API Endpoints</h2>
+
+      <div class="endpoint">
+        <strong>GET <code>/health</code></strong
+        ><br />
+        Service health check and status
+      </div>
+
+      <div class="endpoint">
+        <strong>GET <code>/glucose</code></strong
+        ><br />
+        Latest glucose reading with simple format
+      </div>
+
+      <div class="endpoint">
+        <strong>GET <code>/graph</code></strong
+        ><br />
+        Last 2 hours of glucose data in a simple format
+      </div>
+
+      <h2>
+        📊 Native Web Component
+        <pre><code>circle-trendicator</code></pre>
+      </h2>
+      <div id="output_glucose_indicator" class="glucose-container"></div>
+      <h3><a href="trendicators.html" target="_blank">code samples</a></h3>
+
+      <h2>🧪 Test the API</h2>
+      <p>Try these endpoints:</p>
+      <ul>
+        <li><a href="/health" target="_blank">Health Check</a></li>
+        <li><a href="/glucose" target="_blank">Latest Glucose Reading</a></li>
+        <li>
+          <a href="/graph" target="_blank">Last 2 hours of Glucose Data</a>
+        </li>
+      </ul>
+
+      <h2>/health</h2>
+      <div id="output_health_json"></div>
+
+      <h2>/glucose</h2>
+      <div id="output_glucose_json"></div>
+
+      <h2>/graph</h2>
+      <div id="output_graph_json"></div>
+
+      <h2>📖 Documentation</h2>
+      <p>
+        For complete setup instructions and API documentation, visit the
+        <a href="https://github.com/run-time/sugarsugar" target="_blank"
+          >GitHub repository</a
+        >.
+      </p>
+
+      <div class="footer">
+        <p>Made with ❤️ by Dave Alger | Powered by Dexcom Share API</p>
+        <p><small>This project is not affiliated with Dexcom, Inc.</small></p>
+      </div>
+    </div>
+
+    <script>
+      // Example data for health check
+      async function fetchHealth() {
+        const endpoint = '/health';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          document.getElementById('output_health_json').innerHTML =
+            \`<pre>\${JSON.stringify(data, null, 2)}</pre>\`;
+        } catch (error) {
+          document.getElementById('output_health_json').innerHTML =
+            \`<p>Error: \${error.message}</p>\`;
+        }
+      }
+      fetchHealth();
+
+      // Example data for trendicators
+      async function fetchGraph() {
+        const endpoint = '/graph';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+          const data = await response.json();
+          document.getElementById('output_graph_json').innerHTML =
+            \`<pre>\${JSON.stringify(data, null, 2)}</pre>\`;
+        } catch (error) {
+          document.getElementById('output_graph_json').innerHTML =
+            \`<p>Error: \${error.message}</p>\`;
+        }
+      }
+      fetchGraph();
+    </script>
+
+    <script type="module">
+      import { getCGMTrendicator } from './circle-trendicator.js';
+
+      // Simple script to fetch and display API data
+      async function fetchGlucose() {
+        const endpoint = '/glucose';
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error('Network response was not ok');
+
+          const data = await response.json();
+
+          document.getElementById('output_glucose_indicator').innerHTML =
+            getCGMTrendicator(data);
+          document.getElementById('output_glucose_json').innerHTML =
+            \`<pre>\${JSON.stringify(data, null, 2)}</pre>\`;
+        } catch (error) {
+          document.getElementById('output_glucose_json').innerHTML =
+            \`<p>Error: \${error.message}</p>\`;
+        }
+      }
+      fetchGlucose();
+
+      // Set up automatic updates every minute (60,000 milliseconds)
+      setInterval(fetchGlucose, 60000);
+    </script>
+  </body>
+</html>
+"
+`;
