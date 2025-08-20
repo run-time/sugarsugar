@@ -12,7 +12,7 @@ An easy to host, easy to use webservice to get your blood glucose data from Dexc
 | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | **GET [`/glucose`](https://sugarsugar.vercel.app/glucose)**                        | Latest glucose reading in a simple format                                                      |
 | **GET [`/graph`](https://sugarsugar.vercel.app/graph)**                     | List of all glucose readings for the last 2 hours (default)                                    |
-| **GET [`/graph?hours=5.5`](https://sugarsugar.vercel.app/graph?hours=12)** | Get up to an entire day of glucose readings by adding the query parameter `hours` (0.1 - 24.0) |
+| **GET [`/graph?hours=12`](https://sugarsugar.vercel.app/graph?hours=12)** | Get up to an entire day of glucose readings by adding the query parameter `hours` (0.1 - 24.0) |
 | **GET [`/health`](https://sugarsugar.vercel.app/health)**                   | Service health check and status                                                                |
 
 ---
