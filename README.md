@@ -1,120 +1,47 @@
-# SugarSugar
+# 🍭 SugarSugar API
 
-A webservice to ask Dexcom Share for blood glucose data.
+**A webservice to ask Dexcom Share servers for blood glucose data**
 
-## [Live Demo](https://sugarsugar.vercel.app/)
+[![Live Demo](https://sugarsugar.vercel.app/)](https://sugarsugar.vercel.app/)
+
+> **Status:** LIVE &nbsp; **API Version:** 1.0.0
 
 ---
 
-## Installation
+## 📊 API Endpoints
 
-1. Clone the repository:
+- **GET `/glucose`**  
+  Latest glucose reading in a simple format
 
-```bash
-git clone https://github.com/run-time/sugarsugar.git
-cd sugarsugar
-```
+- **GET `/graph`**  
+  List of all glucose readings for the last 2 hours (default)
 
-2. Install dependencies:
+- **GET `/graph?hours=5.5`**  
+  Get up to an entire day of glucose readings by adding the query parameter `hours` (0.1 - 24.0)
 
-```bash
-npm install
-```
+- **GET `/health`**  
+  Service health check and status
 
-3. Set up environment variables:
+---
 
-```bash
-npm run setup
-```
+## 📦 Native Web Component
 
-4. Edit `.env.vercel` with your actual Dexcom credentials:
+- `circle-trendicator.js`  
+  Easily display glucose trends in your own app.
 
-```bash
-# Edit the file with your credentials
-DEXCOM_SHARE_ID=your_account_id
-DEXCOM_SHARE_USERNAME=your_dexcom_username
-DEXCOM_SHARE_PASSWORD=your_dexcom_password
-```
+---
 
-> **⚠️ Security Note**: Never commit `.env.vercel` files to git. These files contain sensitive credentials and should only exist locally or in your deployment environment.
+## 📖 Code Examples
 
-## Configuration
+- [CGM Viewer Example](public/examples/cgm.html)
+- [Amazon Echo Viewer Example](public/examples/alexa.html)
 
-1. Set up your environment variables in `.env.vercel`:
+---
 
-```bash
-npm run setup
-```
+## ⌗ API Responses
 
-- `DEXCOM_SHARE_ID`: Your Dexcom Share account ID
-- `DEXCOM_SHARE_USERNAME`: Your Dexcom Share username
-- `DEXCOM_SHARE_PASSWORD`: Your Dexcom Share password
-- `DEXCOM_SHARE_SERVER`: Dexcom server region
-
-| Code  | Region                  | Server URL      |
-| ----- | ----------------------- | --------------- |
-| us    | United States (default) | uam1.dexcom.com |
-| jp    | Japan/Asia-Pacific      | uam.dexcom.jp   |
-| other | Outside the US          | uam2.dexcom.com |
-
-2. Start the API server:
-
-```bash
-npm start
-```
-
-3. The API will be available at `http://localhost:3000`
-
-## API Directory Structure
-
-The `api/` directory contains the core functionality:
-
-- **`sugarsugar.js`** - Main SugarSugar class that handles Dexcom Share API communication
-- **`constants.js`** - Configuration constants for Dexcom servers and endpoints
-- **`index.js`** - Express server for **local development only** (not used in Vercel deployments)
-- **`glucose.js`** - Vercel serverless function for glucose data endpoint (used in production)
-- **`health.js`** - Vercel serverless function for health check endpoint (used in production)
-
-### Local Development vs Deployment
-
-**Local Development:**
-
-- Uses `api/index.js` as an Express server
-- Run with `npm start` or `npm run dev`
-- Serves the full API on `http://localhost:3000`
-
-**Vercel Deployment:**
-
-- Uses serverless functions `glucose.js` and `health.js`
-- `index.js` is **NOT** used in production
-- Configured via `vercel.json` routing
-
-## API Endpoints
-
-### `GET /api/health`
-
-Health check endpoint that returns the service status.
-
-**Response:**
-
-```json
-{
-  "status": "ok",
-  "timestamp": "2025-08-05T12:00:00.000Z",
-  "service": "SugarSugar API"
-}
-```
-
-### `GET /api/glucose`
-
-Retrieves blood glucose readings from Dexcom Share.
-
-**Query Parameters:**
-
-- `minutes` (optional) - Number of minutes of historical data to retrieve (default: 1440, max: 1440)
-- `maxCount` (optional) - Maximum number of readings to return (default: 1, max: 288)
-
-**Response:**
+<details>
+  <summary><strong>/glucose</strong></summary>
 
 ```json
 [
@@ -128,38 +55,70 @@ Retrieves blood glucose readings from Dexcom Share.
 ]
 ```
 
-## Scripts
+</details>
 
-### Development
+<details>
+  <summary><strong>/graph</strong></summary>
 
-```bash
-npm start        # Start local development server
-npm run dev      # Start with file watching
-npm test         # Run tests
+Returns an array of glucose readings for the requested time period.
+
+</details>
+
+<details>
+  <summary><strong>/health</strong></summary>
+
+```json
+{
+  "status": "ok",
+  "timestamp": "2025-08-05T12:00:00.000Z",
+  "service": "SugarSugar API"
+}
 ```
 
-### Build & Deploy
+</details>
+
+---
+
+## 🚀 Quick Start
 
 ```bash
-npm run build           # Build for production
-npm run vercel-build    # Vercel build command
+git clone https://github.com/run-time/sugarsugar.git
+cd sugarsugar
+npm install
+npm run setup
+# Edit .env.vercel with your Dexcom credentials
+npm start
 ```
 
-### Code Quality
+API available at: [http://localhost:3000](http://localhost:3000)
 
-```bash
-npm run lint            # Check code style
-npm run lint:fix        # Fix linting issues
-npm run format          # Check formatting
-npm run format:fix      # Fix formatting
-```
+---
 
-## Dependencies
+## 🛠 Scripts
 
-## Author
+- `npm start` – Start local development server
+- `npm run dev` – Start with file watching
+- `npm test` – Run tests
+- `npm run build` – Build for production
+- `npm run vercel-build` – Vercel build command
+- `npm run lint` – Check code style
+- `npm run format` – Check formatting
+- `npm run verify` - Run this before making a PR
+
+---
+
+## 📚 Documentation
+
+For complete setup instructions and API documentation, visit the [GitHub repository](https://github.com/run-time/sugarsugar).
+
+---
+
+## ❤️ Author
 
 Dave Alger <me@davealger.com>
 
-## Disclaimer
+---
 
-This project is not affiliated with Dexcom, Inc. Use of the Dexcom Share API is subject to Dexcom's terms of service. Please ensure you have permission to access the data you're requesting.
+## ⚠️ Disclaimer
+
+This project is not affiliated with Dexcom, Inc. Use of the Dexcom Share API is subject to Dexcom's terms of service.
