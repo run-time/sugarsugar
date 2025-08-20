@@ -1,10 +1,12 @@
 # 🍭 SugarSugar API
 
-An easy to host, easy to use webservice to get your blood glucose data from Dexcom
+An easy to host, easy to use webservice to get and display your Dexcom CGM blood glucose data
 
 ---
 
 # [• &nbsp;• •• Live Demo •• •&nbsp; •](https://sugarsugar.vercel.app/)
+
+---
 
 ## 📊 API Endpoints
 
@@ -165,17 +167,14 @@ Easily display glucose trends on your own web app with this responsive CGM trend
 
 ```bash
 git clone https://github.com/run-time/sugarsugar.git
-
 cd sugarsugar
-
 npm install
-
 npm run setup
-
-# add your Dexcom share credentials to .env.vercel (message me directly if you don't know where to find these)
-
+# add your Dexcom share credentials to .env.vercel (message me if you need help finding these)
 npm start
 ```
+
+---
 
 ## 🛠 Scripts
 
@@ -188,17 +187,29 @@ npm start
 - `npm run format` – Check formatting
 - `npm run verify` - Run this before making a PR
 
+---
+
 ## 📚 Documentation
 
-Looking for helpers to add complete documentation on the [GitHub repository](https://github.com/run-time/sugarsugar) for how to run your own SugarSugar webservice and connect your own Amazon Echo devices to it for free using [vercel](https://vercel.com/).
+TODO: Looking for helpers to add complete documentation on the [GitHub repository](https://github.com/run-time/sugarsugar) for how to run your own SugarSugar webservice and connect your own Amazon Echo devices to it for free using [vercel](https://vercel.com/).
+
+---
 
 ## ❤️ Author
 
 Hi I'm Dave 👋
 
-I messaged the creator of sugarmate a few times and was sad when that was taken down. I now have a way to run and host everything myself for free and it's all in this repo.
+Many years ago I stumbled upon Sugarmate and got it linked with my Amazon Echo device to tell me my latest glucose reading. I messaged the creator of Sugarmate a few times and he made it so I could get my glucose data from a webservice URL.
 
-Send me a message that doesn't look like SPAM and I'll help you get up and running too! <me@davealger.com>
+I used this data to do things like change the light bulb colors in my room to yellow when too high or red when too low, and add my current reading to the touchbar on the MacBook so it was [always visible while coding](https://x.com/DaveAlger/status/1450194591144054785).
+
+<img width="400" height="400" alt="image" src="https://github.com/user-attachments/assets/34b30754-97d5-4920-9195-f1dd9f4cad8d" />
+
+I was sad when that service was taken down a few years ago. 😢 
+
+I missed it so much that I decided to build my own webservice / Amazon skill and that's how SugarSugar was born. An open-source way of running/hosting everything myself and it's all in this repo! Send me a message that doesn't look like SPAM and I'll help you get up and running too! <me@davealger.com>
+
+I am happy now. 😊
 
 ---
 
