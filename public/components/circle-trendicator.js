@@ -1,1 +1,0 @@
-../../components/circle-trendicator.js

@@ -59,7 +59,7 @@ export default [
     },
   },
   {
-    files: ['public/**/*.js', 'components/**/*.js'],
+    files: ['public/**/*.js'],
     languageOptions: {
       globals: {
         window: 'readonly',

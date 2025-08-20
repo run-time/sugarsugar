@@ -16,14 +16,6 @@
       "dest": "/api/graph.js"
     },
     {
-      "src": "/components/(.*).js",
-      "dest": "/components/$1.js"
-    },
-    {
-      "src": "/examples/(.*)",
-      "dest": "/examples/$1"
-    },
-    {
       "src": "/(.*)",
       "dest": "/$1"
     }

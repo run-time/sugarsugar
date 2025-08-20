@@ -21,7 +21,7 @@ exports[`UI public/index.html > should return 200 OK and render the landing page
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugarSugar API</title>
-    <script src="/components/circle-trendicator.js" type="module"></script>
+    <script src="/circle-trendicator.js" type="module"></script>
     <script>
       window.BENCHMARKS = { LOW: 60, HIGH: 240 };
     </script>
@@ -158,12 +158,10 @@ exports[`UI public/index.html > should return 200 OK and render the landing page
         <h2>📊 Native Web Component</h2>
         <div id="output_glucose_indicator" class="glucose-container"></div>
         <h2>
-          <a href="/examples/cgm.html" target="_blank"
-            >Code examples for a CGM viewer</a
-          >
+          <a href="/cgm.html" target="_blank">Code examples for a CGM viewer</a>
         </h2>
         <h2>
-          <a href="/examples/alexa.html" target="_blank"
+          <a href="/alexa.html" target="_blank"
             >Code example for an Amazon Echo viewer</a
           >
         </h2>
@@ -233,7 +231,7 @@ exports[`UI public/index.html > should return 200 OK and render the landing page
     </script>
 
     <script type="module">
-      import { getCGMTrendicator } from './components/circle-trendicator.js';
+      import { getCGMTrendicator } from './circle-trendicator.js';
       async function fetchGlucose() {
         try {
           const response = await fetch('/glucose');

@@ -33,8 +33,8 @@
 
 ## 📖 Code Examples
 
-- [CGM Viewer Example](public/examples/cgm.html)
-- [Amazon Echo Viewer Example](public/examples/alexa.html)
+- [CGM Viewer Example](/cgm.html)
+- [Amazon Echo Viewer Example](/alexa.html)
 
 ---
 

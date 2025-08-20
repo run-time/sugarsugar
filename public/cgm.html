@@ -1,13 +1,10 @@
-// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
-
-exports[`UI public/trendicators.html > should return 200 OK and render the expected HTML 1`] = `
-"<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugarSugar API</title>
-    <script src="/circle-trendicator.js" type="module"></script>
+    <script type="module" src="./circle-trendicator.js"></script>
     <style>
       body {
         font-family:
@@ -170,19 +167,19 @@ exports[`UI public/trendicators.html > should return 200 OK and render the expec
         trendicatorExampleGroups.forEach((group) => {
           const card = document.createElement('div');
           card.className = 'card';
-          let html = \`<h2>\${group.title}</h2>\`;
+          let html = `<h2>${group.title}</h2>`;
           group.examples.forEach((ex) => {
             const attrStr = Object.entries(ex.attrs)
-              .map(([k, v]) => \`\${k}="\${v}"\`)
+              .map(([k, v]) => `${k}="${v}"`)
               .join(' ');
-            html += \`
+            html += `
               <div class="bordered">
-              <p><code class="code">&lt;circle-trendicator \${attrStr}&gt;&lt;/circle-trendicator&gt;</code></p>
+              <p><code class="code">&lt;circle-trendicator ${attrStr}&gt;&lt;/circle-trendicator&gt;</code></p>
               <br>
-              <circle-trendicator \${attrStr}></circle-trendicator>
+              <circle-trendicator ${attrStr}></circle-trendicator>
               <br><br>
               </div>
-            \`;
+            `;
           });
           card.innerHTML = html;
           container.appendChild(card);
@@ -191,5 +188,3 @@ exports[`UI public/trendicators.html > should return 200 OK and render the expec
     </div>
   </body>
 </html>
-"
-`;

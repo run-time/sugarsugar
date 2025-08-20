@@ -1,5 +1,5 @@
 // a specialized trend indicator for glucose data
-import '../components/glucose-mini-graph.js';
+import './glucose-mini-graph.js';
 
 window._glucoseFullData = null;
 window._glucoseDisplayWindow = 2;

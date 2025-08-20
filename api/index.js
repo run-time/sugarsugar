@@ -194,10 +194,8 @@ if (process.env.NODE_ENV !== 'production') {
       '===========================================================================',
     );
     console.log(`🌐 Web Service Info: http://localhost:${port}/index.html`);
-    console.log(`📊 CGM Examples: http://localhost:${port}/examples/cgm.html`);
-    console.log(
-      `📱 Alexa Example: http://localhost:${port}/examples/alexa.html`,
-    );
+    console.log(`📊 CGM Examples: http://localhost:${port}/cgm.html`);
+    console.log(`📱 Alexa Example: http://localhost:${port}/alexa.html`);
     console.log(
       '---------------------------------------------------------------------------',
     );
