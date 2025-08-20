@@ -51,8 +51,22 @@ function initializeDexcomClient() {
 }
 
 // Health check endpoint for API route (matches health.js serverless function)
-app.get('/health', (req, res) => {
-  res.json({
+app.all('/health', (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  if (req.method !== 'GET') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  res.status(200).json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     service: 'SugarSugar Dexcom API',
@@ -80,8 +94,8 @@ app.get('/glucose', async (req, res) => {
       value_difference: reading._value_difference,
       trend: reading._trend_info,
       status: reading._status,
-      read: reading._time_ago,
       minutes_ago: reading._minutes_ago,
+      last_reading: reading._time_ago,
     });
   } catch (error) {
     console.error('Error fetching glucose:', error);
@@ -100,6 +114,12 @@ app.get('/graph', async (req, res) => {
 
     // Parse hours from query, default to 2.0
     const hours = parseFloat(req.query.hours) || 2.0;
+    if (isNaN(hours) || hours < 0.1 || hours > 24.0) {
+      res
+        .status(400)
+        .json({ error: 'Invalid hours: must be between 0.1 and 24.0' });
+      return;
+    }
 
     // Dexcom readings are 5 minutes apart, so 12 readings per hour
     const maxReadings = parseInt(Math.round((hours * 60) / 5)) || 24;
@@ -168,17 +188,20 @@ if (process.env.NODE_ENV !== 'production') {
     console.log(
       '\n===========================================================================',
     );
-    console.log(`SugarSugar Local Dev Server running on port [${port}]`);
+    console.log('🍭 SugarSugar 🍭');
+    console.log(`Local Development Server running on port [${port}]`);
     console.log(
       '===========================================================================',
     );
     console.log(`🌐 Web Service Info: http://localhost:${port}/index.html`);
+    console.log(`📊 CGM Examples: http://localhost:${port}/examples/cgm.html`);
     console.log(
-      `🩺 circle-trendicator: http://localhost:${port}/trendicators.html`,
+      `📱 Alexa Example: http://localhost:${port}/examples/alexa.html`,
     );
     console.log(
       '---------------------------------------------------------------------------',
     );
+    console.log(`🌳 Root / response: http://localhost:${port}/`);
     console.log(`🆗 Service /health check: http://localhost:${port}/health`);
     console.log(`🩸 Latest /glucose reading: http://localhost:${port}/glucose`);
     console.log(`📈 Recent /graph data: http://localhost:${port}/graph`);

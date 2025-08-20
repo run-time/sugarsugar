@@ -4,13 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugarSugar API</title>
-
-    <script src="./circle-trendicator.js" type="module"></script>
+    <script src="/components/circle-trendicator.js" type="module"></script>
     <script>
-      window.BENCHMARKS = {
-        LOW: 60,
-        HIGH: 240,
-      };
+      window.BENCHMARKS = { LOW: 60, HIGH: 240 };
     </script>
     <style>
       body {
@@ -24,7 +20,7 @@
       }
 
       .container {
-        background: white;
+        background: #fff;
         padding: 30px;
         border-radius: 10px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -47,20 +43,21 @@
         border-radius: 5px;
         margin: 10px 0;
         border-left: 4px solid #007acc;
+        cursor: pointer;
       }
 
       .endpoint code {
+        color: #007acc;
         background: #e8f4f8;
         padding: 2px 6px;
         border-radius: 3px;
-        font-family: 'Monaco', 'Consolas', monospace;
+        font-family: Monaco, Consolas, monospace;
       }
 
       a {
         color: #007acc;
         text-decoration: none;
       }
-
       a:hover {
         text-decoration: underline;
       }
@@ -72,7 +69,6 @@
         font-size: 0.9em;
         font-weight: bold;
       }
-
       .status.live {
         background: #d4edda;
         color: #155724;
@@ -93,82 +89,106 @@
   </head>
 
   <body>
-    <div class="container">
-      <h1>🍭 SugarSugar API</h1>
-      <p>
-        <strong
-          >A webservice to ask Dexcom Share servers for blood glucose
-          data</strong
+    <main class="container">
+      <header>
+        <h1 aria-label="SugarSugar API">🍭 SugarSugar API</h1>
+        <p>
+          <strong
+            >A webservice to ask Dexcom Share servers for blood glucose
+            data</strong
+          >
+        </p>
+        <p>
+          <span class="status live" aria-label="Live">LIVE</span> API Version
+          1.0.0
+        </p>
+      </header>
+
+      <section>
+        <h2>📊 API Endpoints</h2>
+
+        <div class="endpoint" onclick="window.open('/glucose','_blank')">
+          <strong>GET <code>/glucose</code></strong
+          ><br />
+          Latest glucose reading in a simple format
+        </div>
+
+        <div class="endpoint" onclick="window.open('/graph','_blank')">
+          <strong>GET <code>/graph</code></strong
+          ><br />
+          List of all glucose readings for the last 2 hours (default)
+        </div>
+
+        <div
+          class="endpoint"
+          onclick="window.open('/graph?hours=5.5','_blank')"
         >
-      </p>
-      <p><span class="status live">LIVE</span> API Version 1.0.0</p>
+          <strong>GET <code>/graph?hours=5.5</code></strong
+          ><br />
+          Get up to an entire day of glucose readings by adding the query
+          parameter <code>hours</code> and setting it equal to how many hours of
+          data you want (0.1 - 24.0)
+        </div>
 
-      <h2>📊 API Endpoints</h2>
+        <div class="endpoint" onclick="window.open('/health','_blank')">
+          <strong>GET <code>/health</code></strong
+          ><br />
+          Service health check and status
+        </div>
+      </section>
 
-      <div class="endpoint">
-        <strong>GET <code>/health</code></strong
-        ><br />
-        Service health check and status
-      </div>
+      <section>
+        <h2>📊 Native Web Component</h2>
+        <div id="output_glucose_indicator" class="glucose-container"></div>
+        <h2>
+          <a href="/examples/cgm.html" target="_blank"
+            >Code examples for a CGM viewer</a
+          >
+        </h2>
+        <h2>
+          <a href="/examples/alexa.html" target="_blank"
+            >Code example for an Amazon Echo viewer</a
+          >
+        </h2>
+      </section>
 
-      <div class="endpoint">
-        <strong>GET <code>/glucose</code></strong
-        ><br />
-        Latest glucose reading with simple format
-      </div>
+      <section>
+        <h2>⌗ API Responses</h2>
 
-      <div class="endpoint">
-        <strong>GET <code>/graph</code></strong
-        ><br />
-        Last 2 hours of glucose data in a simple format
-      </div>
+        <h3>/glucose</h3>
+        <div id="output_glucose_json"></div>
 
-      <h2>
-        📊 Native Web Component
-        <pre><code>circle-trendicator</code></pre>
-      </h2>
-      <div id="output_glucose_indicator" class="glucose-container"></div>
-      <h3><a href="trendicators.html" target="_blank">code samples</a></h3>
+        <h3>/graph</h3>
+        <div id="output_graph_json"></div>
 
-      <h2>🧪 Test the API</h2>
-      <p>Try these endpoints:</p>
-      <ul>
-        <li><a href="/health" target="_blank">Health Check</a></li>
-        <li><a href="/glucose" target="_blank">Latest Glucose Reading</a></li>
-        <li>
-          <a href="/graph" target="_blank">Last 2 hours of Glucose Data</a>
-        </li>
-      </ul>
+        <h3>/health</h3>
+        <div id="output_health_json"></div>
+      </section>
 
-      <h2>/health</h2>
-      <div id="output_health_json"></div>
+      <section>
+        <h2>📖 Documentation</h2>
+        <p>
+          For complete setup instructions and API documentation, visit the
+          <a href="https://github.com/run-time/sugarsugar" target="_blank"
+            >GitHub repository</a
+          >.
+        </p>
+      </section>
 
-      <h2>/glucose</h2>
-      <div id="output_glucose_json"></div>
-
-      <h2>/graph</h2>
-      <div id="output_graph_json"></div>
-
-      <h2>📖 Documentation</h2>
-      <p>
-        For complete setup instructions and API documentation, visit the
-        <a href="https://github.com/run-time/sugarsugar" target="_blank"
-          >GitHub repository</a
-        >.
-      </p>
-
-      <div class="footer">
+      <footer class="footer">
         <p>Made with ❤️ by Dave Alger | Powered by Dexcom Share API</p>
-        <p><small>This project is not affiliated with Dexcom, Inc.</small></p>
-      </div>
-    </div>
+        <p>
+          <small
+            >Disclaimer: This project is not affiliated with Dexcom, Inc.</small
+          >
+        </p>
+      </footer>
+    </main>
 
     <script>
-      // Example data for health check
       async function fetchHealth() {
-        const endpoint = '/health';
         try {
-          const response = await fetch(endpoint);
+          const response = await fetch('/health');
           if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
           document.getElementById('output_health_json').innerHTML =
@@ -180,11 +200,9 @@
       }
       fetchHealth();
 
-      // Example data for trendicators
       async function fetchGraph() {
-        const endpoint = '/graph';
         try {
-          const response = await fetch(endpoint);
+          const response = await fetch('/graph');
           if (!response.ok) throw new Error('Network response was not ok');
           const data = await response.json();
           document.getElementById('output_graph_json').innerHTML =
@@ -198,17 +216,12 @@
     </script>
 
     <script type="module">
-      import { getCGMTrendicator } from './circle-trendicator.js';
-
-      // Simple script to fetch and display API data
+      import { getCGMTrendicator } from './components/circle-trendicator.js';
       async function fetchGlucose() {
-        const endpoint = '/glucose';
         try {
-          const response = await fetch(endpoint);
+          const response = await fetch('/glucose');
           if (!response.ok) throw new Error('Network response was not ok');
-
           const data = await response.json();
-
           document.getElementById('output_glucose_indicator').innerHTML =
             getCGMTrendicator(data);
           document.getElementById('output_glucose_json').innerHTML =
@@ -219,8 +232,6 @@
         }
       }
       fetchGlucose();
-
-      // Set up automatic updates every minute (60,000 milliseconds)
       setInterval(fetchGlucose, 60000);
     </script>
   </body>

@@ -15,11 +15,8 @@ class GlucoseMiniGraph extends HTMLElement {
     this._displayWindowOptions = [2, 4, 6, 8];
     this._displayWindowIdx = 0;
   }
-  // ...existing code...
   connectedCallback() {
-    // Use local state for cycling (already set in constructor)
     this._updateDisplayWindow();
-    // Guard: only attach one click listener per instance
     if (!this._hasClickListener) {
       this.addEventListener('click', (e) => {
         e.stopPropagation();
@@ -50,12 +47,11 @@ class GlucoseMiniGraph extends HTMLElement {
     }
   }
 
-  // Reset cycling to the first option and update data
   resetDisplayWindow() {
     this._displayWindowIdx = 0;
     this._updateDisplayWindow();
   }
-  // Allow external update of data (for display window changes)
+
   updateData(newData) {
     this._data = newData;
     this.render();
@@ -125,11 +121,8 @@ class GlucoseMiniGraph extends HTMLElement {
     const xStep = (width - 2 * margin) / (readings.length - 1);
     const y = (v) =>
       height - margin - ((v - min) / (max - min || 1)) * (height - 2 * margin);
-    // ...existing code...
     const lowY = y(LOW);
     const highY = y(HIGH);
-    // Show the current display window in the title if available
-    // Use the local display window for the header
     const hours =
       this._currentDisplayWindow !== undefined
         ? this._currentDisplayWindow
@@ -182,8 +175,7 @@ class GlucoseMiniGraph extends HTMLElement {
     points.forEach((pt, i) => {
       pt.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
-        if (tooltip.style.display === 'block') return; // Already showing
-        // Find the corresponding reading
+        if (tooltip.style.display === 'block') return;
         const r = readings[i];
         if (!r) return;
         const d = new Date(r.time);

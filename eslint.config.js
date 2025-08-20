@@ -17,7 +17,7 @@ export default [
         clearTimeout: 'readonly',
         setInterval: 'readonly',
         clearInterval: 'readonly',
-        fetch: 'readonly', // Node.js 18+ has fetch
+        fetch: 'readonly',
       },
     },
     rules: {
@@ -39,12 +39,27 @@ export default [
   },
   {
     files: ['**/*.test.js', '**/test.js'],
+    languageOptions: {
+      globals: {
+        window: 'readonly',
+        document: 'readonly',
+        HTMLElement: 'readonly',
+        customElements: 'readonly',
+        Element: 'readonly',
+        Event: 'readonly',
+        CustomEvent: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+        expect: 'readonly',
+        vi: 'readonly',
+      },
+    },
     rules: {
       'no-console': 'off',
     },
   },
   {
-    files: ['public/**/*.js'],
+    files: ['public/**/*.js', 'components/**/*.js'],
     languageOptions: {
       globals: {
         window: 'readonly',

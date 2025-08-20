@@ -1,8 +1,8 @@
 # SugarSugar
 
-A webservice to ask Dexcom Share servers for blood glucose data.
+A webservice to ask Dexcom Share for blood glucose data.
 
-### [Live Demo](https://sugarsugar.vercel.app/)
+## [Live Demo](https://sugarsugar.vercel.app/)
 
 ---
 

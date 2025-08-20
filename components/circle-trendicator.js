@@ -1,19 +1,14 @@
 // a specialized trend indicator for glucose data
-// This component displays a circular trend indicator with a mini graph below it
-import './glucose-mini-graph.js';
+import '../components/glucose-mini-graph.js';
 
-// --- Display window state ---
-// Store the full 6-hour data set and current display window globally
-window._glucoseFullData = null; // full 6-hour data
-window._glucoseDisplayWindow = 2; // default hours to show
-window._glucoseDisplayWindowOptions = [2, 4, 6, 8]; // allowed window sizes
+window._glucoseFullData = null;
+window._glucoseDisplayWindow = 2;
+window._glucoseDisplayWindowOptions = [2, 4, 6, 8];
 
-// Helper to update all mini-graphs with the current window
 function updateMiniGraphsDisplayWindow() {
   const allGraphs = document.querySelectorAll('glucose-mini-graph');
   allGraphs.forEach((graph) => {
     if (window._glucoseFullData && Array.isArray(window._glucoseFullData)) {
-      // Slice the data for the current window
       const hours = window._glucoseDisplayWindow;
       const now = Date.now();
       const msWindow = hours * 60 * 60 * 1000;
@@ -21,13 +16,11 @@ function updateMiniGraphsDisplayWindow() {
         const t = new Date(r.time).getTime();
         return now - t <= msWindow;
       });
-      // Always update data and force render, even if hidden
       if (typeof graph.updateData === 'function') {
         graph.updateData(filtered);
       } else {
         graph.data = filtered;
       }
-      // If the graph is hidden, force a render so it will be correct when shown
       if (graph.style && graph.style.display === 'none') {
         graph.render && graph.render();
       }
@@ -123,7 +116,6 @@ class CircleTrendicator extends HTMLElement {
   get hoursOfHistory() {
     const attr = this.getAttribute('hoursOfHistory');
     const val = parseFloat(attr);
-    // Default to 0 if not set or invalid
     return !isNaN(val) && val > 0 ? val : 0;
   }
 
@@ -142,24 +134,25 @@ class CircleTrendicator extends HTMLElement {
       this._graphElem.style.display = 'block';
       this._graphElem.style.boxShadow = '0 2px 8px #0002';
       this._graphElem.style.borderRadius = '12px';
-      // Pass benchmark and rotation attributes if present
+
       if (this.hasAttribute('benchmark-high')) {
         this._graphElem.setAttribute(
           'benchmark-high',
           this.getAttribute('benchmark-high'),
         );
       }
+
       if (this.hasAttribute('benchmark-low')) {
         this._graphElem.setAttribute(
           'benchmark-low',
           this.getAttribute('benchmark-low'),
         );
       }
+
       if (this.hasAttribute('rotation')) {
         this._graphElem.setAttribute('rotation', this.getAttribute('rotation'));
       }
     } else {
-      // Update attributes if they change after creation
       if (this.hasAttribute('benchmark-high')) {
         this._graphElem.setAttribute(
           'benchmark-high',
@@ -168,6 +161,7 @@ class CircleTrendicator extends HTMLElement {
       } else {
         this._graphElem.removeAttribute('benchmark-high');
       }
+
       if (this.hasAttribute('benchmark-low')) {
         this._graphElem.setAttribute(
           'benchmark-low',
@@ -176,12 +170,14 @@ class CircleTrendicator extends HTMLElement {
       } else {
         this._graphElem.removeAttribute('benchmark-low');
       }
+
       if (this.hasAttribute('rotation')) {
         this._graphElem.setAttribute('rotation', this.getAttribute('rotation'));
       } else {
         this._graphElem.removeAttribute('rotation');
       }
     }
+
     this._graphElem.innerHTML = '<div style="padding:8px;">Loading…</div>';
     let data = null;
     let error = null;
@@ -212,16 +208,19 @@ class CircleTrendicator extends HTMLElement {
         console.error('[CircleTrendicator] Error fetching', lastUrl, err);
       }
     }
-    // Ensure the custom element is upgraded before setting data
+
     if (window.customElements && window.customElements.upgrade) {
       window.customElements.upgrade(this._graphElem);
     }
+
     if (data && data.readings && Array.isArray(data.readings)) {
-      // Store full data globally
+      // Store full 8 hours of readings data globally
       window._glucoseFullData = data.readings;
-      // Set initial display window if not set
-      if (!window._glucoseDisplayWindow) window._glucoseDisplayWindow = 2;
-      // Slice for current window
+
+      if (!window._glucoseDisplayWindow) {
+        window._glucoseDisplayWindow = 2;
+      }
+
       const hours = window._glucoseDisplayWindow;
       const now = Date.now();
       const msWindow = hours * 60 * 60 * 1000;
@@ -229,10 +228,9 @@ class CircleTrendicator extends HTMLElement {
         const t = new Date(r.time).getTime();
         return now - t <= msWindow;
       });
+
       this._graphElem.data = filtered;
       this._graphElem._preloadError = null;
-      // Do not add a click handler here; glucose-mini-graph.js handles cycling
-      // Also allow clicking the circle trendicator to cycle window
       this.addEventListener('dblclick', (e) => {
         e.stopPropagation();
         const opts = window._glucoseDisplayWindowOptions;
@@ -394,9 +392,9 @@ class CircleTrendicator extends HTMLElement {
         <div id="mini-graph-slot"></div>
       </div>
     `;
-    // Attach the mini graph if visible
+
     const slot = this.shadowRoot.getElementById('mini-graph-slot');
-    // Always update benchmark attributes before attaching
+
     if (this._graphElem) {
       const high = this.getAttribute('benchmark-high');
       const low = this.getAttribute('benchmark-low');
@@ -420,11 +418,11 @@ class CircleTrendicator extends HTMLElement {
     if (this._graphVisible && this._graphElem) {
       if (!slot.contains(this._graphElem)) {
         slot.appendChild(this._graphElem);
-        // Always reset cycling state after attaching
+
         if (typeof this._graphElem.resetDisplayWindow === 'function') {
           this._graphElem.resetDisplayWindow();
         }
-        // Set data again after attaching to DOM to ensure rendering
+
         if (this._graphElem._preloadError == null && this._graphElem._data) {
           this._graphElem.data = this._graphElem._data;
         }
@@ -436,7 +434,6 @@ class CircleTrendicator extends HTMLElement {
 
   _onClick(e) {
     e.stopPropagation();
-    // If opening the mini graph, reset the mini-graph's local cycling state only
     if (!this._graphVisible) {
       if (
         this._graphElem &&

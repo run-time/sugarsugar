@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Centered Circle Trendicator</title>
-    <script type="module" src="./circle-trendicator.js"></script>
+    <script type="module" src="/components/circle-trendicator.js"></script>
     <style>
       html,
       body {
@@ -36,7 +36,6 @@
     <div id="trendicator-container"></div>
     <script>
       function getCircleSize() {
-        // Use 60% of the smaller viewport dimension
         const w = window.innerWidth;
         const h = window.innerHeight;
         return Math.floor(Math.min(w, h) * 0.6);
@@ -106,7 +105,16 @@
         container.appendChild(el);
       }
 
-      window.addEventListener('resize', renderTrendicator);
+      // Debounce function to limit how often renderTrendicator is called on resize
+      function debounce(fn, delay) {
+        let timer = null;
+        return function (...args) {
+          clearTimeout(timer);
+          timer = setTimeout(() => fn.apply(this, args), delay);
+        };
+      }
+
+      window.addEventListener('resize', debounce(renderTrendicator, 300));
       window.addEventListener('DOMContentLoaded', renderTrendicator);
     </script>
   </body>

@@ -19,6 +19,9 @@ async function waitForServer(url, timeout = 10000) {
 }
 
 beforeAll(async () => {
+  console.log('==== TEST RUN STARTED ====');
+  console.log('Starting test server...');
+
   serverProcess = spawn('node', ['api/index.js'], {
     stdio: 'inherit',
     env: { ...process.env, NODE_ENV: 'test' },
@@ -29,6 +32,7 @@ beforeAll(async () => {
 afterAll(() => {
   if (serverProcess) {
     serverProcess.kill();
-    console.log('Test server process killed.');
+    console.log('Server process terminated');
   }
+  console.log('==== TEST RUN COMPLETED ====');
 });

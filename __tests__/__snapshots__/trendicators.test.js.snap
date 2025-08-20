@@ -7,7 +7,7 @@ exports[`UI public/trendicators.html > should return 200 OK and render the expec
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>SugarSugar API</title>
-    <script src="./circle-trendicator.js" type="module"></script>
+    <script src="/circle-trendicator.js" type="module"></script>
     <style>
       body {
         font-family:

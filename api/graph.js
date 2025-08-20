@@ -22,6 +22,12 @@ export default async function handler(req, res) {
 
     // Parse hours from query, default to 2.0
     const hours = parseFloat(req.query.hours) || 2.0;
+    if (isNaN(hours) || hours < 0.1 || hours > 24.0) {
+      res
+        .status(400)
+        .json({ error: 'Invalid hours: must be between 0.1 and 24.0' });
+      return;
+    }
 
     // Dexcom readings are 5 minutes apart, so 12 readings per hour
     const maxReadings = parseInt(Math.round((hours * 60) / 5)) || 24;

@@ -33,8 +33,8 @@ export default async function handler(req, res) {
       value_difference: reading._value_difference,
       trend: reading._trend_info,
       status: reading._status,
-      read: reading._time_ago,
       minutes_ago: reading._minutes_ago,
+      last_reading: reading._time_ago,
     });
   } catch (error) {
     console.error('Error fetching glucose:', error);

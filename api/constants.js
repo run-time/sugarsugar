@@ -55,75 +55,60 @@ const TREND_ARROWS = {
     id: 'None',
     symbol: '—',
     name: 'No Arrow',
-    description:
-      'No arrow is displayed, typically indicating that the system cannot compute a reliable trend arrow.',
     trendRate: 0,
   },
   DoubleUp: {
     id: 'DoubleUp',
     symbol: '⇈',
     name: 'Rising Rapidly',
-    description: 'Blood sugar is rapidly increasing (+3 ≤ trendRate ≤ +8)',
     trendRate: 3,
   },
   SingleUp: {
     id: 'SingleUp',
     symbol: '↑',
     name: 'Rising',
-    description:
-      'Blood sugar is increasing at a moderate pace (+2 ≤ trendRate < +3)',
     trendRate: 2,
   },
   FortyFiveUp: {
     id: 'FortyFiveUp',
     symbol: '↗',
     name: 'Rising Slowly',
-    description: 'Blood sugar is slowly increasing (+1 ≤ trendRate < +2)',
     trendRate: 1,
   },
   Flat: {
     id: 'Flat',
     symbol: '→',
     name: 'Level',
-    description:
-      'Blood sugar is stable or changing very slowly (-1 < trendRate < +1)',
     trendRate: 0,
   },
   FortyFiveDown: {
     id: 'FortyFiveDown',
     symbol: '↘',
     name: 'Falling Slowly',
-    description: 'Blood sugar is slowly decreasing (-1 < trendRate ≤ 0)',
     trendRate: -1,
   },
   SingleDown: {
     id: 'SingleDown',
     symbol: '↓',
     name: 'Falling',
-    description:
-      'Blood sugar is decreasing at a moderate pace (-3 < trendRate ≤ -2)',
     trendRate: -2,
   },
   DoubleDown: {
     id: 'DoubleDown',
     symbol: '⇊',
     name: 'Falling Rapidly',
-    description: 'Blood sugar is rapidly decreasing (-8 < trendRate ≤ -3)',
     trendRate: -3,
   },
   NotComputable: {
     id: 'NotComputable',
     symbol: '?',
     name: 'Not Computable',
-    description: 'The algorithm is unable to compute a trend arrow',
     trendRate: 0,
   },
   RateOutOfRange: {
     id: 'RateOutOfRange',
     symbol: '!',
     name: 'Rate Out Of Range',
-    description:
-      'The calculated glucose rate falls outside the range for assigning trend arrows',
     trendRate: 0,
   },
 };
