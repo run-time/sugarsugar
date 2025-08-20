@@ -27,19 +27,33 @@ function updateMiniGraphsDisplayWindow() {
     }
   });
 }
-export function getCGMTrendicator(data) {
+export function getCGMTrendicator(data, propOverrides) {
   let retElement = '';
   const BENCHMARKS = window.BENCHMARKS || { HIGH: 240, LOW: 60 };
-  const benchAttrs = `benchmark-high="${BENCHMARKS.HIGH}" benchmark-low="${BENCHMARKS.LOW}" hoursOfHistory="2"`;
+
+  // list benchmark props as json
+  const propBenchmarks = {
+    benchmarkHigh: BENCHMARKS.HIGH,
+    benchmarkLow: BENCHMARKS.LOW,
+    hoursOfHistory: 2,
+  };
+
+  // merge propOverrides with propBenchmarks
+  const mergedProps = { ...propBenchmarks, ...propOverrides };
+
+  // convert prop keys to kebab-case attributes
+  const propAttributeString = Object.entries(mergedProps)
+    .map(([key, value]) => `${key}="${value}"`)
+    .join(' ');
 
   if (!data || !data.value) {
-    retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${propAttributeString}></circle-trendicator>`;
   } else if (data.minutes_ago > 20) {
-    retElement = `<circle-trendicator value="${data.value}" trend="${data.minutes_ago}m ago" rotation="off" theme="error" ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="${data.value}" trend="${data.minutes_ago}m ago" rotation="off" theme="error" ${propAttributeString}></circle-trendicator>`;
   } else if (parseInt(data.value, 0) < 40) {
-    retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="LOW" trend="below 40" rotation="off" theme="low" ${propAttributeString}></circle-trendicator>`;
   } else if (parseInt(data.value, 0) > 400) {
-    retElement = `<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high" ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="HIGH" trend="above 400" rotation="off" theme="high" ${propAttributeString}></circle-trendicator>`;
   } else {
     const trendMap = {
       '—': 'off',
@@ -85,7 +99,7 @@ export function getCGMTrendicator(data) {
         ? 'alert="true"'
         : '';
 
-    retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${benchAttrs}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${propBenchmarks}></circle-trendicator>`;
   }
 
   return retElement;
@@ -135,17 +149,17 @@ class CircleTrendicator extends HTMLElement {
       this._graphElem.style.boxShadow = '0 2px 8px #0002';
       this._graphElem.style.borderRadius = '12px';
 
-      if (this.hasAttribute('benchmark-high')) {
+      if (this.hasAttribute('benchmarkHigh')) {
         this._graphElem.setAttribute(
-          'benchmark-high',
-          this.getAttribute('benchmark-high'),
+          'benchmarkHigh',
+          this.getAttribute('benchmarkHigh'),
         );
       }
 
-      if (this.hasAttribute('benchmark-low')) {
+      if (this.hasAttribute('benchmarkLow')) {
         this._graphElem.setAttribute(
-          'benchmark-low',
-          this.getAttribute('benchmark-low'),
+          'benchmarkLow',
+          this.getAttribute('benchmarkLow'),
         );
       }
 
@@ -153,22 +167,22 @@ class CircleTrendicator extends HTMLElement {
         this._graphElem.setAttribute('rotation', this.getAttribute('rotation'));
       }
     } else {
-      if (this.hasAttribute('benchmark-high')) {
+      if (this.hasAttribute('benchmarkHigh')) {
         this._graphElem.setAttribute(
-          'benchmark-high',
-          this.getAttribute('benchmark-high'),
+          'benchmarkHigh',
+          this.getAttribute('benchmarkHigh'),
         );
       } else {
-        this._graphElem.removeAttribute('benchmark-high');
+        this._graphElem.removeAttribute('benchmarkHigh');
       }
 
-      if (this.hasAttribute('benchmark-low')) {
+      if (this.hasAttribute('benchmarkLow')) {
         this._graphElem.setAttribute(
-          'benchmark-low',
-          this.getAttribute('benchmark-low'),
+          'benchmarkLow',
+          this.getAttribute('benchmarkLow'),
         );
       } else {
-        this._graphElem.removeAttribute('benchmark-low');
+        this._graphElem.removeAttribute('benchmarkLow');
       }
 
       if (this.hasAttribute('rotation')) {
@@ -396,23 +410,23 @@ class CircleTrendicator extends HTMLElement {
     const slot = this.shadowRoot.getElementById('mini-graph-slot');
 
     if (this._graphElem) {
-      const high = this.getAttribute('benchmark-high');
-      const low = this.getAttribute('benchmark-low');
+      const high = this.getAttribute('benchmarkHigh');
+      const low = this.getAttribute('benchmarkLow');
       console.log(
-        '[CircleTrendicator] Passing benchmark-high:',
+        '[CircleTrendicator] Passing benchmarkHigh:',
         high,
-        'benchmark-low:',
+        'benchmarkLow:',
         low,
       );
-      if (this.hasAttribute('benchmark-high')) {
-        this._graphElem.setAttribute('benchmark-high', high);
+      if (this.hasAttribute('benchmarkHigh')) {
+        this._graphElem.setAttribute('benchmarkHigh', high);
       } else {
-        this._graphElem.removeAttribute('benchmark-high');
+        this._graphElem.removeAttribute('benchmarkHigh');
       }
-      if (this.hasAttribute('benchmark-low')) {
-        this._graphElem.setAttribute('benchmark-low', low);
+      if (this.hasAttribute('benchmarkLow')) {
+        this._graphElem.setAttribute('benchmarkLow', low);
       } else {
-        this._graphElem.removeAttribute('benchmark-low');
+        this._graphElem.removeAttribute('benchmarkLow');
       }
     }
     if (this._graphVisible && this._graphElem) {

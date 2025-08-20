@@ -58,7 +58,7 @@ class GlucoseMiniGraph extends HTMLElement {
     setTimeout(() => this._attachTooltipListeners(), 0);
   }
   static get observedAttributes() {
-    return ['benchmark-high', 'benchmark-low', 'rotation'];
+    return ['benchmarkHigh', 'benchmarkLow', 'rotation'];
   }
   get rotation() {
     const r = this.getAttribute('rotation');
@@ -77,12 +77,18 @@ class GlucoseMiniGraph extends HTMLElement {
   }
 
   get benchmarkHigh() {
-    let v = this.getAttribute('benchmark-high');
-    console.log('[GlucoseMiniGraph] benchmark-high attribute:', v);
-    if (v === null || v === undefined) return 180;
-    if (typeof v === 'number') return v;
+    let v = this.getAttribute('benchmarkHigh');
+    console.log('[GlucoseMiniGraph] benchmarkHigh attribute:', v);
+    if (v === null || v === undefined) {
+      return 180;
+    }
+    if (typeof v === 'number') {
+      return v;
+    }
     v = v.trim();
-    if (v === '') return 180;
+    if (v === '') {
+      return 180;
+    }
     const num = Number(v);
     console.log(
       '[GlucoseMiniGraph] using benchmarkHigh:',
@@ -91,12 +97,18 @@ class GlucoseMiniGraph extends HTMLElement {
     return isNaN(num) ? 180 : num;
   }
   get benchmarkLow() {
-    let v = this.getAttribute('benchmark-low');
-    console.log('[GlucoseMiniGraph] benchmark-low attribute:', v);
-    if (v === null || v === undefined) return 70;
-    if (typeof v === 'number') return v;
+    let v = this.getAttribute('benchmarkLow');
+    console.log('[GlucoseMiniGraph] benchmarkLow attribute:', v);
+    if (v === null || v === undefined) {
+      return 70;
+    }
+    if (typeof v === 'number') {
+      return v;
+    }
     v = v.trim();
-    if (v === '') return 70;
+    if (v === '') {
+      return 70;
+    }
     const num = Number(v);
     console.log(
       '[GlucoseMiniGraph] using benchmarkLow:',
@@ -107,7 +119,8 @@ class GlucoseMiniGraph extends HTMLElement {
 
   render() {
     if (!this._data || this._data.length === 0) {
-      this.innerHTML = '<div style="padding:8px;color:#888;">No data</div>';
+      this.innerHTML =
+        '<div style="padding:8px;color:#fff;background-color:#cc6060;font-family:monospace;">•• no data ••</div>';
       return;
     }
     const readings = [...this._data].reverse();
@@ -154,8 +167,11 @@ class GlucoseMiniGraph extends HTMLElement {
           ${readings
             .map((r, i) => {
               let cls = 'mini-graph-dot';
-              if (r.value < LOW) cls += ' low';
-              else if (r.value > HIGH) cls += ' high';
+              if (r.value < LOW) {
+                cls += ' low';
+              } else if (r.value > HIGH) {
+                cls += ' high';
+              }
               return `<circle class="${cls}" cx="${margin + i * xStep}" cy="${y(r.value)}" r="2.6"/>`;
             })
             .join('')}
@@ -167,7 +183,9 @@ class GlucoseMiniGraph extends HTMLElement {
   _attachTooltipListeners() {
     const svg = this.querySelector('svg');
     const tooltip = this.querySelector('#glucose-tooltip');
-    if (!svg || !tooltip) return;
+    if (!svg || !tooltip) {
+      return;
+    }
     const points = svg.querySelectorAll('circle');
     const readings = [...this._data].reverse();
     const LOW = this.benchmarkLow,
@@ -175,15 +193,21 @@ class GlucoseMiniGraph extends HTMLElement {
     points.forEach((pt, i) => {
       pt.addEventListener('mouseenter', (e) => {
         e.stopPropagation();
-        if (tooltip.style.display === 'block') return;
+        if (tooltip.style.display === 'block') {
+          return;
+        }
         const r = readings[i];
-        if (!r) return;
+        if (!r) {
+          return;
+        }
         const d = new Date(r.time);
         let h = d.getHours();
         let m = d.getMinutes();
         const ampm = h >= 12 ? 'pm' : 'am';
         h = h % 12;
-        if (h === 0) h = 12;
+        if (h === 0) {
+          h = 12;
+        }
         m = m.toString().padStart(2, '0');
         const timeStr = `${h}:${m}${ampm}`;
         let color = COLORS.default;
@@ -193,8 +217,11 @@ class GlucoseMiniGraph extends HTMLElement {
         } else if (r.value === 401) {
           valueDisplay = 'HIGH';
         }
-        if (r.value < LOW) color = COLORS.low;
-        else if (r.value > HIGH) color = COLORS.high;
+        if (r.value < LOW) {
+          color = COLORS.low;
+        } else if (r.value > HIGH) {
+          color = COLORS.high;
+        }
         tooltip.innerHTML =
           `<span style="background:${COLORS.tooltipBg};color:${COLORS.tooltipText};padding:2px 7px 2px 7px;font-size:13px;white-space:nowrap;display:inline-block;">` +
           `<span style='color:${COLORS.tooltipText};'>${timeStr}</span>&nbsp;` +

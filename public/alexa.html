@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Centered Circle Trendicator</title>
-    <script type="module" src="/circle-trendicator.js"></script>
+    <title>CGM Trendicator</title>
     <style>
       html,
       body {
@@ -16,6 +15,7 @@
         height: 100vh;
         overflow: hidden;
       }
+
       body {
         display: flex;
         align-items: center;
@@ -23,6 +23,7 @@
         min-height: 100vh;
         min-width: 100vw;
       }
+
       #trendicator-container {
         display: flex;
         align-items: center;
@@ -32,80 +33,21 @@
       }
     </style>
   </head>
+
   <body>
     <div id="trendicator-container"></div>
-    <script>
+
+    <script type="module">
+      import { getCGMTrendicator } from '/circle-trendicator.js';
+
+      // make sure the trendicator fits since Alexa has a variety of screen sizes
       function getCircleSize() {
         const w = window.innerWidth;
         const h = window.innerHeight;
         return Math.floor(Math.min(w, h) * 0.6);
       }
 
-      async function fetchGlucoseData() {
-        try {
-          const resp = await fetch('https://sugarsugar.vercel.app/glucose');
-          if (!resp.ok) throw new Error('Network response was not ok');
-          return await resp.json();
-        } catch (e) {
-          return null;
-        }
-      }
-
-      async function renderTrendicator() {
-        const container = document.getElementById('trendicator-container');
-        container.innerHTML = '';
-        const size = getCircleSize();
-        const data = await fetchGlucoseData();
-        const el = document.createElement('circle-trendicator');
-        if (data) {
-          el.setAttribute('value', data.value ?? '??');
-          el.setAttribute(
-            'trend',
-            data.value_difference !== undefined
-              ? data.value_difference > 0
-                ? `+${data.value_difference}`
-                : `${data.value_difference}`
-              : '?',
-          );
-          el.setAttribute(
-            'rotation',
-            data.trend && data.trend.symbol
-              ? (function (symbol) {
-                  const map = {
-                    '—': 'off',
-                    '⇈': '0',
-                    '↑': '0',
-                    '↗': '45',
-                    '→': '90',
-                    '↘': '135',
-                    '↓': '180',
-                    '⇊': '180',
-                    '?': 'off',
-                    '!': 'off',
-                  };
-                  return map[symbol] ?? 'off';
-                })(data.trend.symbol)
-              : 'off',
-          );
-          el.setAttribute(
-            'theme',
-            data.status === 'LOW'
-              ? 'low'
-              : data.status === 'HIGH'
-                ? 'high'
-                : 'default',
-          );
-        } else {
-          el.setAttribute('value', '??');
-          el.setAttribute('trend', '?');
-          el.setAttribute('rotation', 'off');
-          el.setAttribute('theme', 'error');
-        }
-        el.setAttribute('size', size);
-        container.appendChild(el);
-      }
-
-      // Debounce function to limit how often renderTrendicator is called on resize
+      // debounce function to limit how often renderTrendicator is called on resize
       function debounce(fn, delay) {
         let timer = null;
         return function (...args) {
@@ -114,8 +56,36 @@
         };
       }
 
+      let cachedGlucoseData = null;
+
+      function renderTrendicator() {
+        const trendicatorContainer = document.getElementById(
+          'trendicator-container',
+        );
+        if (!cachedGlucoseData) return;
+        const circleSize = getCircleSize();
+        const props = {
+          size: circleSize,
+        };
+        const trendicator = getCGMTrendicator(cachedGlucoseData, props);
+        trendicatorContainer.innerHTML = trendicator;
+      }
+
+      async function fetchGlucose() {
+        try {
+          const trendicatorContainer = document.getElementById(
+            'trendicator-container',
+          );
+          const response = await fetch('/glucose');
+          cachedGlucoseData = await response.json();
+          renderTrendicator();
+        } catch (error) {
+          trendicatorContainer.innerHTML = `<p style="color: #ffaaaa;">Error: ${error.message}</p>`;
+        }
+      }
+
       window.addEventListener('resize', debounce(renderTrendicator, 300));
-      window.addEventListener('DOMContentLoaded', renderTrendicator);
+      window.addEventListener('DOMContentLoaded', fetchGlucose);
     </script>
   </body>
 </html>

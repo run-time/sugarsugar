@@ -1,26 +1,13 @@
-# Dependencies
 node_modules/
 package-lock.json
+eslint.config.js
 
-# Build output
 dist/
 build/
 *.min.js
-
-# Logs
 *.log
-
-# Environment files
 .env*
-
-# Git
 .git/
-
-# Coverage
 coverage/
-
-# Vercel
 .vercel/
-
-# macOS
 .DS_Store
