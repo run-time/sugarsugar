@@ -205,7 +205,7 @@ I used this data to do things like change the light bulb colors in my room to ye
 
 Needless to say, I was sad when that service was taken down a few years ago. 😢
 
-I missed it so much that I decided to build my own webservice and my own Amazon skill. That's how SugarSugar was born -- an open-source way of running and hosting everything myself and it's all in this repo.
+I missed it so much that I decided to build my own webservice and my own Amazon skill. That's how SugarSugar was born — an open-source way of running and hosting everything so it is accessible to all my devices. I put all my code in this repo for other diabetic developers to use in their own ways.
 
 I am in-range and happy now. 😊
 
