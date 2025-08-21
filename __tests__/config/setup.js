@@ -9,7 +9,9 @@ async function waitForServer(url, timeout = 10000) {
   while (Date.now() - start < timeout) {
     try {
       const res = await fetch(url);
-      if (res.ok) return true;
+      if (res.ok) {
+        return true;
+      }
     } catch {
       // Ignore errors while waiting for server
     }

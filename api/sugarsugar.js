@@ -261,8 +261,12 @@ class SugarSugar {
   }
 
   getGlucoseStatus(value) {
-    if (value < BENCHMARKS.LOW) return 'LOW';
-    if (value > BENCHMARKS.HIGH) return 'HIGH';
+    if (value < BENCHMARKS.LOW) {
+      return 'LOW';
+    }
+    if (value > BENCHMARKS.HIGH) {
+      return 'HIGH';
+    }
     return 'IN RANGE';
   }
 }

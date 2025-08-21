@@ -44,7 +44,7 @@
       function getCircleSize() {
         const w = window.innerWidth;
         const h = window.innerHeight;
-        return Math.floor(Math.min(w, h) * 0.6);
+        return Math.floor(Math.min(w, h) * 0.5);
       }
 
       // debounce function to limit how often renderTrendicator is called on resize
@@ -66,6 +66,7 @@
         const circleSize = getCircleSize();
         const props = {
           size: circleSize,
+          'hours-of-history': 0, // hide mini graph on alexa
         };
         const trendicator = getCGMTrendicator(cachedGlucoseData, props);
         trendicatorContainer.innerHTML = trendicator;

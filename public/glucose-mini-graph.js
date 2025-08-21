@@ -78,7 +78,7 @@ class GlucoseMiniGraph extends HTMLElement {
 
   get benchmarkHigh() {
     let v = this.getAttribute('benchmarkHigh');
-    console.log('[GlucoseMiniGraph] benchmarkHigh attribute:', v);
+
     if (v === null || v === undefined) {
       return 180;
     }
@@ -90,15 +90,11 @@ class GlucoseMiniGraph extends HTMLElement {
       return 180;
     }
     const num = Number(v);
-    console.log(
-      '[GlucoseMiniGraph] using benchmarkHigh:',
-      isNaN(num) ? 180 : num,
-    );
     return isNaN(num) ? 180 : num;
   }
   get benchmarkLow() {
     let v = this.getAttribute('benchmarkLow');
-    console.log('[GlucoseMiniGraph] benchmarkLow attribute:', v);
+
     if (v === null || v === undefined) {
       return 70;
     }
@@ -110,10 +106,6 @@ class GlucoseMiniGraph extends HTMLElement {
       return 70;
     }
     const num = Number(v);
-    console.log(
-      '[GlucoseMiniGraph] using benchmarkLow:',
-      isNaN(num) ? 70 : num,
-    );
     return isNaN(num) ? 70 : num;
   }
 

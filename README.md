@@ -10,12 +10,12 @@ An easy to host, easy to use webservice to get and display your Dexcom CGM blood
 
 ## 📊 API Endpoints
 
-| Endpoint                                                                    | Description                                                                                    |
-| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| **GET [`/glucose`](https://sugarsugar.vercel.app/glucose)**                        | Latest glucose reading in a simple format                                                      |
-| **GET [`/graph`](https://sugarsugar.vercel.app/graph)**                     | List of all glucose readings for the last 2 hours (default)                                    |
+| Endpoint                                                                  | Description                                                                                    |
+| ------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **GET [`/glucose`](https://sugarsugar.vercel.app/glucose)**               | Latest glucose reading in a simple format                                                      |
+| **GET [`/graph`](https://sugarsugar.vercel.app/graph)**                   | List of all glucose readings for the last 2 hours (default)                                    |
 | **GET [`/graph?hours=12`](https://sugarsugar.vercel.app/graph?hours=12)** | Get up to an entire day of glucose readings by adding the query parameter `hours` (0.1 - 24.0) |
-| **GET [`/health`](https://sugarsugar.vercel.app/health)**                   | Service health check and status                                                                |
+| **GET [`/health`](https://sugarsugar.vercel.app/health)**                 | Service health check and status                                                                |
 
 ---
 
@@ -203,7 +203,7 @@ Many years ago I stumbled upon Sugarmate and got it linked with my Amazon Echo d
 
 I used this data to do things like change the light bulb colors in my room to yellow when too high or red when too low, and add my current reading to the touchbar on the MacBook so it was [always visible while coding](https://x.com/DaveAlger/status/1450194591144054785). 🎉
 
-Needless to say, I was sad when that service was taken down a few years ago. 😢 
+Needless to say, I was sad when that service was taken down a few years ago. 😢
 
 I missed it so much that I decided to build my own webservice + Amazon skill and that's how SugarSugar was born. An open-source way of running and hosting everything myself. It's all in this repo so send me a message that doesn't look like SPAM and I'll help you get up and running too! <me@davealger.com>
 

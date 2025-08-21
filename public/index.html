@@ -54,10 +54,17 @@
         font-family: Monaco, Consolas, monospace;
       }
 
+      .output-json {
+        background: #242424;
+        color: #f2f2f2;
+        padding: 4px 20px;
+      }
+
       a {
         color: #007acc;
         text-decoration: none;
       }
+
       a:hover {
         text-decoration: underline;
       }
@@ -69,6 +76,7 @@
         font-size: 0.9em;
         font-weight: bold;
       }
+
       .status.live {
         background: #d4edda;
         color: #155724;
@@ -84,6 +92,7 @@
 
       .glucose-container {
         font-family: system-ui;
+        margin-top: 30px;
       }
     </style>
   </head>
@@ -154,13 +163,13 @@
         <h2>⌗ API Responses</h2>
 
         <h3>/glucose</h3>
-        <div id="output_glucose_json"></div>
+        <div id="output_glucose_json" class="output-json"></div>
 
         <h3>/graph</h3>
-        <div id="output_graph_json"></div>
+        <div id="output_graph_json" class="output-json"></div>
 
         <h3>/health</h3>
-        <div id="output_health_json"></div>
+        <div id="output_health_json" class="output-json"></div>
       </section>
 
       <section>

@@ -35,16 +35,18 @@ export function getCGMTrendicator(data, propOverrides) {
   const propBenchmarks = {
     benchmarkHigh: BENCHMARKS.HIGH,
     benchmarkLow: BENCHMARKS.LOW,
-    hoursOfHistory: 2,
+    'hours-of-history': 2,
   };
 
   // merge propOverrides with propBenchmarks
   const mergedProps = { ...propBenchmarks, ...propOverrides };
 
-  // convert prop keys to kebab-case attributes
+  // convert json props to attribute string
   const propAttributeString = Object.entries(mergedProps)
     .map(([key, value]) => `${key}="${value}"`)
     .join(' ');
+
+  console.log(propAttributeString);
 
   if (!data || !data.value) {
     retElement = `<circle-trendicator value="??" trend="?" rotation="off" theme="default" ${propAttributeString}></circle-trendicator>`;
@@ -99,7 +101,7 @@ export function getCGMTrendicator(data, propOverrides) {
         ? 'alert="true"'
         : '';
 
-    retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${propBenchmarks}></circle-trendicator>`;
+    retElement = `<circle-trendicator value="${glucoseValue}" trend="${glucoseTrend}" rotation="${glucoseRotation}" theme="${glucoseTheme}" ${calcAlert} ${propAttributeString}></circle-trendicator>`;
   }
 
   return retElement;
@@ -123,12 +125,12 @@ class CircleTrendicator extends HTMLElement {
       'bgColor',
       'size',
       'rotation',
-      'hoursOfHistory',
+      'hours-of-history',
     ];
   }
 
   get hoursOfHistory() {
-    const attr = this.getAttribute('hoursOfHistory');
+    const attr = this.getAttribute('hours-of-history');
     const val = parseFloat(attr);
     return !isNaN(val) && val > 0 ? val : 0;
   }
