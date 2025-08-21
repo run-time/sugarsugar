@@ -127,4 +127,4 @@ if (!existsSync(indexHtmlPath)) {
 
 console.log('✅ Build process completed');
 console.log('📁 Using: public/index.html');
-console.log('🚀 Ready for Vercel deployment!');
+console.log('\n\n\x1b[32m🚀 Ready for Vercel deployment!\x1b[0m\n\n');

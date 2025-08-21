@@ -111,6 +111,12 @@ exports[`UI public/index.html > should return 200 OK and render the landing page
         font-family: system-ui;
         margin-top: 30px;
       }
+
+      .graph-message {
+        font-size: 14px;
+        color: #909090;
+        margin-top: 10px;
+      }
     </style>
   </head>
 
@@ -166,6 +172,7 @@ exports[`UI public/index.html > should return 200 OK and render the landing page
       <section>
         <h2>📊 Native Web Component</h2>
         <div id="output_glucose_indicator" class="glucose-container"></div>
+        <div class="graph-message">click trendicator to show history</div>
         <h2>
           <a href="/cgm.html" target="_blank">Code examples for a CGM viewer</a>
         </h2>
