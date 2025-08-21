@@ -39,6 +39,24 @@ export default [
     },
   },
   {
+    files: ['integrations/alexa_skill/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'script',
+      globals: {
+        require: 'readonly',
+        exports: 'readonly',
+        module: 'readonly',
+        process: 'readonly',
+        console: 'readonly',
+      },
+    },
+    rules: {
+      'no-undef': 'off',
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
     files: ['**/*.test.js', '**/test.js'],
     languageOptions: {
       globals: {

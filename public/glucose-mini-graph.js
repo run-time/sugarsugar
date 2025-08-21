@@ -143,10 +143,10 @@ class GlucoseMiniGraph extends HTMLElement {
         .mini-graph-dot { fill: ${COLORS.default}; }
         .mini-graph-dot.low { fill: ${COLORS.low}; }
         .mini-graph-dot.high { fill: ${COLORS.high}; }
-  .mini-graph-bench-low { stroke: ${COLORS.low}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
-  .mini-graph-bench-high { stroke: ${COLORS.high}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
+        .mini-graph-bench-low { stroke: ${COLORS.low}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
+        .mini-graph-bench-high { stroke: ${COLORS.high}; stroke-width: 1; stroke-dasharray: none; opacity: 0.6; }
       </style>
-  <div style="margin-top: ${offset}px;">
+      <div style="margin-top: ${offset}px;">
         ${title}
         <svg width="${width}" height="${height}">
           <rect class="mini-graph-bg" x="0" y="0" width="${width}" height="${height}" />
