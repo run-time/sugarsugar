@@ -88,5 +88,33 @@
       window.addEventListener('resize', debounce(renderTrendicator, 300));
       window.addEventListener('DOMContentLoaded', fetchGlucose);
     </script>
+
+    <script>
+      const getColorCSS = (c) => {
+        let ele = document.createElement("div");
+        ele.style.color = c;
+        return ele.style.color.split(/\s+/).join('').toLowerCase();
+      }
+      
+      const isColorValid = (c) => {
+        let s = getColorCSS(c);
+        return (s) ? true : false;
+      }
+      
+      const urlParams = new URLSearchParams(window.location.search);
+      const bgColor = urlParams.get('bg');
+      
+      if (bgColor) {
+        const addHashIfMissing = str => /^[0-9a-fA-F]{6}\(\vert{}^[0-9a-fA-F]{8}\)/.test(str) ? `#${str}` : str;
+        const c = addHashIfMissing(bgColor);
+        const pageBackgroundColor = getColorCSS(c);
+        
+        if (isColorValid(pageBackgroundColor)) {
+          document.body.style.backgroundColor = pageBackgroundColor;
+        } else {
+          document.body.style.backgroundColor = "#000000";
+        }
+      }
+    </script>
   </body>
 </html>
