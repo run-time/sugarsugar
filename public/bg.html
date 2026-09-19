@@ -65,7 +65,7 @@
         const circleSize = getCircleSize();
         const props = {
           size: circleSize,
-          'hours-of-history': 0, // hide mini graph on alexa
+          'hours-of-history': 8,
         };
         const trendicator = getCGMTrendicator(cachedGlucoseData, props);
         trendicatorContainer.innerHTML = trendicator;
