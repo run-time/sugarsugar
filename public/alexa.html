@@ -106,15 +106,9 @@
         
         if (bgColor) {
           function addHashIfMissing(str) {
-            // Regular expression for valid 3, 4, 6, or 8 character hex codes
-            const hexRegex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})\$/;
-            
-            // If it's a valid hex string without a hash, prepend the hash
-            if (hexRegex.test(str)) {
-              return `#${str}`;
-            }
-            
-            return str;
+            var s = str.trim();
+            const hexRegex = /^([0-9a-fA-F]{3}|[0-9a-fA-F]{4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/;
+            return (hexRegex.test(s)) ? `#${s}` : s;
           }
 
           const c = addHashIfMissing(bgColor);
