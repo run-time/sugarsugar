@@ -27,8 +27,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 120px;
-        height: 120px;
+        width: 100vw;
+        height: 100vh;
       }
     </style>
   </head>
@@ -39,22 +39,6 @@
     <script type="module">
       import { getCGMTrendicator } from '/circle-trendicator.js';
 
-      // make sure the trendicator fits since Alexa has a variety of screen sizes
-      function getCircleSize() {
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        return Math.floor(Math.min(w, h) * 0.5);
-      }
-
-      // debounce function to limit how often renderTrendicator is called on resize
-      function debounce(fn, delay) {
-        let timer = null;
-        return function (...args) {
-          clearTimeout(timer);
-          timer = setTimeout(() => fn.apply(this, args), delay);
-        };
-      }
-
       let cachedGlucoseData = null;
 
       function renderTrendicator() {
@@ -62,10 +46,10 @@
           'trendicator-container',
         );
         if (!cachedGlucoseData) return;
-        const circleSize = getCircleSize();
+        const circleSize = 120;
         const props = {
           size: circleSize,
-          'hours-of-history': 8,
+          'hours-of-history': 24,
         };
         const trendicator = getCGMTrendicator(cachedGlucoseData, props);
         trendicatorContainer.innerHTML = trendicator;
@@ -84,7 +68,6 @@
         }
       }
 
-      window.addEventListener('resize', debounce(renderTrendicator, 300));
       window.addEventListener('DOMContentLoaded', fetchGlucose);
     </script>
 
